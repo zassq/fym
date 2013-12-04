@@ -61,7 +61,7 @@ function add_new_ml(){
     var tpl = $('.marketing_log_row').first().html().replace(/_1/g, '_'+current_row);
     $('#marketing_logs').append($('<div class="form-group marketing_log_row" id="ml_row_'+current_row+'">').append(tpl));
     initDatePicker($('#ml_date_'+current_row).parent('.marketing_log_date'));
-    $('#ml_staff_name_'+current_row).val($('#ls_sales_rep_'+current_row).find('option:selected').text());
+    if($('#ls_sales_rep_'+current_row).length > 0) $('#ml_staff_name_'+current_row).val($('#ls_sales_rep_'+current_row).find('option:selected').text());
 }
 
 function delet_ml_row(id){

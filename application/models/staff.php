@@ -19,7 +19,7 @@ class Staff extends MY_Model{
         $s = new Staff;
         $all = $s->get();
         $return = array();
-        if(!$include_admin){
+        if($all){
             foreach($all as $k=>$v){
                 if(!$include_admin && $v->usertype == 'A') continue;
                 $return[$v->id] = $v->name;

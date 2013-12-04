@@ -82,7 +82,7 @@ class Clients extends MY_Model{
     public static function get_all_clients($mlClass){
         $c = new Clients();
         $all = $c->get();
-        $all_ml = $mlClass->get();
+        $all_ml = $mlClass->get(0, 0, 'date desc');
         foreach($all_ml as $ml){
             $all[$ml->cid]->marketing_log[] = $ml;
         }

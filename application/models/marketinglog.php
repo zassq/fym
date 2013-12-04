@@ -18,7 +18,7 @@ class Marketinglog extends MY_Model{
 
     public static function getAllLog(){
         $ml = new Marketinglog();
-        $rawData = $ml->get();
+        $rawData = $ml->get(0, 0, 'date desc');
         $return = array();
         foreach($rawData as $row){
             $return[$row->cid][] = $row;
@@ -27,10 +27,16 @@ class Marketinglog extends MY_Model{
     }
 
     public function load_by_cid($cid){
-        $query = $this->db->get_where($this::DB_TABLE, array(
+        $query = $this->db->order_by('date', 'desc')->get_where($this::DB_TABLE, array(
             'cid' => $cid,
         ));
-        if($query) $this->populate($query->row());
+        $return = array();
+        if($query){
+            foreach($query->result() as $row){
+                $return[] = $row;
+            }
+        }
+        return $return;
     }
 }
 

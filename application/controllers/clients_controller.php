@@ -8,7 +8,7 @@ class Clients_controller extends CI_Controller {
         parent::__construct();
 
         #echo '<pre>';var_dump(Progress::get());die();
-        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT && false){
+        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT){
             $sections = array(
                 'benchmarks' => TRUE, 'memory_usage' => TRUE,
                 'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => FALSE, 'queries' => TRUE,
@@ -135,13 +135,15 @@ class Clients_controller extends CI_Controller {
         $client = new Clients();
         $ml = new Marketinglog();
         $client->load($cid);
-        $ml->load_by_cid($cid);
+        $ml_items = $ml->load_by_cid($cid);
         $this->data['client'] = $client;
-        $this->data['ml'] = $ml;
+        $this->data['ml_items'] = $ml_items;
         $this->data['level1'] = Hightech_level::get_level1();
+        $this->data['staff'] = Staff::get_staff($this->userinfo->usertype == 'A' ? true: false);
 
         $this->data['here'] = 'clients';
-        $this->data['load_extra'] = array('dataTables');
+        $this->data['load_extra'] = array('dataTables','datatimepicker');
+        $this->load->helper('form');
         $this->load->view('common/head', $this->data);
         $this->load->view('clients_view', $this->data);
         $this->load->view('common/foot', $this->data);
@@ -221,5 +223,30 @@ class Clients_controller extends CI_Controller {
         }
 
 
+    }
+
+    public function client_add_ml(){
+        if($this->input->post('save_ml')){
+            $cid = $this->input->post('cid');
+            $ml_date = $this->input->post('ml_date');
+            if(count($ml_date)> 0){
+                $ml_log = $this->input->post('ml_log');
+                $ml_staff_id = $this->input->post('ml_staff_id');
+                $ml_staff_name = $this->input->post('ml_staff_name');
+                foreach($ml_date as $k => $v){
+                    if(empty($v) || $v == '') continue;
+                    $ml = new Marketinglog();
+                    $ml->cid = $cid;
+                    $ml->date = $v;
+                    $ml->sid = $ml_staff_id[$k];
+                    $ml->staff = $ml_staff_name[$k];
+                    $ml->detail = $ml_log[$k];
+                    $ml->save();
+                }
+            }
+            redirect('client/'.$cid);
+        }else{
+            redirect(site_url('users/dash'));
+        }
     }
 }

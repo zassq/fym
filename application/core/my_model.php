@@ -69,7 +69,8 @@ class MY_Model extends CI_Model {
      * @param int $offset Optional; if set, requires $limit.
      * @return array Models populated by database, keyed by PK.
      */
-    public function get($limit = 0, $offset = 0) {
+    public function get($limit = 0, $offset = 0, $order_by = '') {
+        if(!empty($order_by)) $this->db->order_by($order_by);
         if ($limit) {
             $query = $this->db->get($this::DB_TABLE, $limit, $offset);
         }

@@ -77,4 +77,17 @@ $lang['already_client'] = "已有客户";
 $lang['already_hightech'] = "已通过高新";
 $lang['file_name'] = "文件名称";
 $lang['new_client_list_detail'] = "新客户明细";
+
+
+
+
+
+
+
+
+
+
+$lang['company_details'] = "详细信息";
+$lang['update_client'] = '修改客户信息';
+$lang['no_marketing_log'] = '尚无跟进记录。';
 ?>
