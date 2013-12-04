@@ -1,0 +1,21 @@
+RewriteEngine on
+RewriteBase /
+
+# Hide the application and system directories by redirecting the request to index.php
+#RewriteRule ^(application|system|\.svn) index.php/$1 [L]
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+
+# Prevent CI index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php/$0 [PT,L]
+
+# Prevent user access to the CI system folder.
+RewriteCond %{REQUEST_URI} ^system.*
+RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+# Prevent user access to the CI application folder
+RewriteCond %{REQUEST_URI} ^application.*
+RewriteRule ^(.*)$ /index.php?/$1 [L]

@@ -1,0 +1,56 @@
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+
+<?php if(isset($site_message)): ?>
+<div id="site_message" data-msg-type="<?php echo $site_message['type']?>">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><?php if($site_message['type'] == 'W') echo lang('warning');elseif('E' == $site_message['type']) echo lang('error');elseif('I' == $site_message['type']) echo lang('info'); ?></h4>
+                </div>
+                <div class="modal-body">
+                    <p><?php echo $site_message['msg']; ?></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo lang('close');?></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<?php endif; ?>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/assets/js/jquery-1.10.2.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<?php if(isset($load_extra) && is_array($load_extra)){
+    foreach($load_extra as $le){
+        switch($le){
+            case 'dataTables': ?>
+                <script src="/assets/js/jquery.dataTables.min.js"></script>
+                <script src="/assets/js/bootstrap-dataTables.min.js"></script>
+            <?php break;
+            case 'datatimepicker': ?>
+                <script src="/assets/js/moment.min.js"></script>
+                <script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
+                <script src="/assets/js/bootstrap-datetimepicker.zh-CN.min.js"></script>
+            <?php break;
+            case 'clients_filter': ?>
+                <script src="/assets/js/jquery.ui.widget.min.js"></script>
+                <script src="/assets/js/jquery.iframe-transport.min.js"></script>
+                <script src="/assets/js/jquery.fileupload.min.js"></script>
+                <script src="/assets/js/jquery.fileupload-process.min.js"></script>
+                <script src="/assets/js/jquery.fileupload-validate.min.js"></script>
+                <script src="/assets/js/handlebars.runtime-v1.1.2.js"></script>
+                <script src="/assets/js/row.js"></script>
+                <script src="/assets/js/clients_filter.js"></script>
+                <?php break;
+        }
+    }
+}?>
+<script src="/assets/js/site.js"></script>
+</body>
+</html>

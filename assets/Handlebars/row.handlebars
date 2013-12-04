@@ -1,0 +1,29 @@
+{{#each files}}
+<tr>
+	<td>
+		{{#if existed_client}}
+		<a href="/client/{{client_id}}">{{company_name}}</a>
+		{{else}}
+		{{company_name}}
+		{{/if}}
+	</td>
+	<td>
+		{{#if existed_client}}
+		Y
+		{{else}}
+		N
+		{{/if}}
+	</td>
+	<td>
+		{{#compare is_hightech 'Y'}}
+		Y
+		{{/compare}}
+		{{#compare is_hightech 'N'}}
+		N
+		{{/compare}}
+	</td>
+	<td>
+	balabala
+	</td>
+</tr>
+{{/each}}
