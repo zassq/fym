@@ -1,5 +1,6 @@
 $(function(){
     'use strict';
+    var client_data;
     $(document).on('uploadStateChange', stateChangeHandler);
     $(window).on('beforeunload', function(){
         return '如果现在离开本页面，所有未保存客户将丢失（可重新上传名单找回），确定离开吗？';
@@ -40,6 +41,7 @@ $(function(){
             if(typeof data.result.error != "undefined" && data.result.error != ''){
                 $.event.trigger({type:'uploadStateChange',currentState: data.result.error});
             }else if(typeof data.result.files != "undefined" && data.result.files != ''){
+                client_data = data.result.files;
                 $.event.trigger({type:'uploadStateChange',currentState: 'analyse_done'});
                 data.context = $('#client_filter_list_table').find('tbody');
                 data.context.append(Handlebars.templates['row'](data.result));

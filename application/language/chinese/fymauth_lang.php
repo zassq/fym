@@ -77,17 +77,20 @@ $lang['already_client'] = "已有客户";
 $lang['already_hightech'] = "已通过高新";
 $lang['file_name'] = "文件名称";
 $lang['new_client_list_detail'] = "新客户明细";
-
-
-
-
-
-
-
-
-
-
+$lang['add_ml'] = "添加跟进记录";
+$lang['successful_add_ml'] = "成功添加跟进记录！";
+$lang['successful_update_client'] = "成功更新客户信息！";
+$lang['successful_add_new_client'] = "成功添加新客户：<strong>%s</strong>！";
+$lang['no_script'] = "您的浏览器没有启用 javascript，请激活后重启本程序！";
+$lang['ie_warning'] = "您还在用过时的Internet Explorer浏览器吗？使用以下最新的浏览器访问本程序可以获得最佳的用户体验。";
+$lang['chrome'] = "谷歌浏览器";
+$lang['firefox'] = "火狐浏览器";
 $lang['company_details'] = "详细信息";
 $lang['update_client'] = '修改客户信息';
 $lang['no_marketing_log'] = '尚无跟进记录。';
+$lang['new_market_log'] = '新的跟进记录';
+$lang['add_new_ml_log'] = '%s：添加%d条跟进记录';
+$lang['add_new_client_log'] = '%s';
+$lang['update_client_log'] = '修改“%s”客户信息';
+$lang['date_format'] = 'Y年m月d日';
 ?>

@@ -105,6 +105,12 @@ class Clients extends MY_Model{
         }
 
     }
+
+    public static function get_client_name_by_id($cid){
+        $c = new Clients();
+        $c->load($cid);
+        return $c->name;
+    }
 }
 
 ?>

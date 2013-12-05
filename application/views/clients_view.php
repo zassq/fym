@@ -7,38 +7,48 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            <p>
+            <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('company_details') ?></strong></span>
-            <span class="col-md-8">
-                <?php if(!empty($client->address)) echo $client->address."<br />"; ?>
-                <span class="small"><?php echo lang('contact') ?></span>：<?php echo $client->contact; ?><br/>
-                <?php if(!empty($client->phone1)) echo $client->phone1."<br />"; ?>
-                <?php if(!empty($client->phone2)) echo $client->phone2."<br />"; ?>
-                <?php if(!empty($client->phone3)) echo $client->phone3."<br />"; ?>
-                <?php if(!empty($client->note)) echo $client->note.""; ?>
-            </span>
+                <span class="col-md-8">
+                    <?php if(!empty($client->address)) echo $client->address."<br />"; ?>
+                    <?php if(!empty($client->contact)):?><span class="small"><?php echo lang('contact') ?></span>：<?php echo $client->contact; ?><br/><?php endif;?>
+                    <?php if(!empty($client->phone1)) echo $client->phone1."<br />"; ?>
+                    <?php if(!empty($client->phone2)) echo $client->phone2."<br />"; ?>
+                    <?php if(!empty($client->phone3)) echo $client->phone3."<br />"; ?>
+                    <?php if(!empty($client->note)) echo $client->note.""; ?>
+                </span>
             </p>
         </div>
         <div class="col-md-6">
-            <p>
+            <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('sales_rep') ?></strong></span>
                 <span class="col-md-8"><?php echo $client->staff; ?></span>
             </p>
-            <p>
+            <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('level1') ?></strong></span>
                 <span class="col-md-8"><?php echo $level1[$client->level1]; ?></span>
             </p>
-            <p>
+            <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('progress') ?></strong></span>
                 <span class="col-md-8"><?php echo $progress[$client->progress]; ?></span>
             </p>
-            <p>
+            <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('status') ?></strong></span>
                 <span class="col-md-8"><?php echo $status[$client->status]; ?></span>
             </p>
-            <p>
+            <?php if(!empty($client->area)): ?>
+            <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('area') ?></strong></span>
                 <span class="col-md-8"><?php echo $client->area; ?></span>
+            </p>
+            <?php endif; ?>
+            <p class="clearfix">
+                <span class="col-md-4"><strong><?php echo lang('hightech') ?></strong></span>
+                <span class="col-md-8"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('hight_tech_cert_code').'</span>：'.$certs['H']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
+            </p>
+            <p class="clearfix">
+                <span class="col-md-4"><strong><?php echo lang('software_company') ?></strong></span>
+                <span class="col-md-8"><?php if($client->is_soft_comp == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['S'])) echo ' | <span class="small">'.lang('soft_comp_cert_code').'</span>：'.$certs['S']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
             </p>
         </div>
     </div>
@@ -81,10 +91,10 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h2><?php echo lang('marketing_log');?> | <a href="javascript:" class="btn btn-primary" onclick="javascript: add_new_ml();"><?php echo lang('add_new_ml') ?></a></h2>
+            <h2><?php echo lang('marketing_log');?></h2>
             <?php if($ml_items && count($ml_items) > 0): ?>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered">
+                    <table class="table table-striped table-hover table-bordered sorting_table">
                         <thead>
                         <tr>
                             <td>#</td>
@@ -97,7 +107,7 @@
                         <?php foreach($ml_items as $k=>$ml_item):?>
                             <tr>
                                 <td><?php echo $k+1;?></td>
-                                <td><?php echo $ml_item->date;?></td>
+                                <td><?php echo date(lang('date_format'), strtotime($ml_item->date));?></td>
                                 <td><?php echo $ml_item->staff;?></td>
                                 <td><?php echo $ml_item->detail;?></td>
                             </tr>
@@ -108,6 +118,11 @@
             <?php else: ?>
                 <p><?php echo lang('no_marketing_log');?></p>
             <?php endif; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2><?php echo lang('new_market_log'); ?> | <a href="javascript:" class="btn btn-primary" onclick="javascript: add_new_ml();"><?php echo lang('add_new_ml') ?></a></h2>
             <form action="<?php echo site_url('client_add_ml'); ?>" method="post">
                 <input type="hidden" name="cid" value="<?php echo $client->id;?>" />
                 <div id="marketing_logs" class="col-md-12">

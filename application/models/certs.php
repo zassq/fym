@@ -13,6 +13,12 @@ class Certs extends MY_Model{
 	public $cert_date;
 
 	public $cert_expiry;
+
+    public static function get_certs_by_id($cert_id){
+        $cert = new Certs();
+        $cert->load($cert_id);
+        return array($cert->cert_type => $cert);
+    }
 }
 
 ?>

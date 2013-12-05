@@ -22,9 +22,17 @@
                 <?php foreach($clients as $client): ?>
                     <tr>
                         <td><?php echo $client->id; ?></td>
-                        <td><a href="<?php echo site_url('client/'.$client->id); ?>"><?php echo $client->name; ?></a></td>
+                        <td>
+                            <a href="<?php echo site_url('client/'.$client->id); ?>"><?php echo $client->name; ?></a><br/>
+                            <?php if(!empty($client->address)):?><span class="small"><?php echo $client->address; ?></span><br/><?php endif;?>
+                            <?php if(!empty($client->contact)):?><span class="small"><?php echo lang('contact') ?>：<?php echo $client->contact; ?></span><br/><?php endif;?>
+                            <?php if(!empty($client->phone1)):?><span class="small"><?php echo $client->phone1; ?></span><br/><?php endif;?>
+                            <?php if(!empty($client->phone2)):?><span class="small"><?php echo $client->phone2; ?></span><br/><?php endif;?>
+                            <?php if(!empty($client->phone3)):?><span class="small"><?php echo $client->phone3; ?></span><br/><?php endif;?>
+                            <?php if(!empty($client->note)):?><span class="small"><?php echo nl2br($client->note); ?></span><br/><?php endif;?>
+                        </td>
                         <td><?php echo $client->is_hightech == "Y" ? lang('yes') : lang('no'); ?></td>
-                        <td><?php echo $client->is_soft_comp == "Y" ? lang('yes') : lang('no'); ?></td>
+                        <td><?php echo $client->is_soft_comp == "Y" ? lang('yes') : lang('no'); ?><?php if(!empty($client->soft_comp_cert_id)) echo '<br/><span class="small text-muted">'.lang('soft_comp_cert_code').'：<strong>'.$certs[$client->soft_comp_cert_id]->cert_code.'</strong></span>';?></td>
                         <td><?php echo !empty($client->level1) ? $level1[$client->level1] : lang('nope'); ?></td>
                         <td><?php echo !empty($client->area)?$client->area : lang('nope'); ?></td>
                         <td><?php echo $client->staff; ?></td>
@@ -32,7 +40,7 @@
                             if(isset($client->marketing_log)){
                                 foreach($client->marketing_log as $ml_key=>$ml){
                                     ?>
-                                    <p class="small"><strong class="text-success"><?php echo $ml->staff ?></strong> :: <?php echo $ml->date; ?><br/><?php echo $ml->detail; ?></p>
+                                    <p class="small"><strong class="text-success"><?php echo $ml->staff ?></strong> | <?php echo date(lang('date_format'), strtotime($ml->date)); ?>：<br/><?php echo $ml->detail; ?></p>
                                     <?php
                                 }
                             }else echo lang('nope');

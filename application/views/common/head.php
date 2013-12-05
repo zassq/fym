@@ -40,7 +40,26 @@
 </head>
 
 <body>
+<noscript>
+    <div class="noscript">
+        <div class="noscript_inner"><?php echo lang('no_script'); ?></div>
+    </div>
+    <div class="noscript_bg">&nbsp;</div>
+</noscript>
+<!--[if lt IE 8]>
+<div class="noscript">
+    <div class="noscript_inner iewarning">
+        <h2><?php echo lang('ie_warning'); ?></h2>
+        <div class="clearfix">
+            <a href="http://www.google.com/intl/zh-CN/chrome/" target="_blank" class="chrome pull-left"><img src="/assets/images/chrome.png" alt="Chrome"/><br /><?php echo lang('chrome'); ?></a>
+            <a href="http://www.firefox.com.cn/download/" target="_blank" class="firefox pull-left"><img src="/assets/images/firefox.png" alt="Chrome"/><br /><?php echo lang('firefox'); ?></a>
+        </div>
+    </div>
+</div>
+<div class="noscript_bg"></div>
+<![endif]-->
 
+<div class="body">
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">

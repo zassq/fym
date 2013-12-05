@@ -53,5 +53,6 @@ $route['client/(:num)'] = "clients_controller/view/$1";
 $route['client_filter'] = 'clients_controller/client_filter';
 $route['client_filter_upload'] = 'clients_controller/client_filter_upload';
 $route['client_add_ml'] = 'clients_controller/client_add_ml';
+$route['client_update/(:num)'] = 'clients_controller/client_update/$1';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
