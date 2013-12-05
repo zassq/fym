@@ -31,11 +31,15 @@
                             <?php if(!empty($client->phone3)):?><span class="small"><?php echo $client->phone3; ?></span><br/><?php endif;?>
                             <?php if(!empty($client->note)):?><span class="small"><?php echo nl2br($client->note); ?></span><br/><?php endif;?>
                         </td>
-                        <td><?php echo $client->is_hightech == "Y" ? lang('yes') : lang('no'); ?></td>
-                        <td><?php echo $client->is_soft_comp == "Y" ? lang('yes') : lang('no'); ?><?php if(!empty($client->soft_comp_cert_id)) echo '<br/><span class="small text-muted">'.lang('soft_comp_cert_code').'：<strong>'.$certs[$client->soft_comp_cert_id]->cert_code.'</strong></span>';?></td>
+                        <td><span class="<?php echo $client->is_hightech == "Y" ? 'text-success' : 'text-danger'; ?>"><?php echo $client->is_hightech == "Y" ? lang('yes') : lang('no'); ?></span><?php if(!empty($client->hightech_cert_id)) echo '<br/><span class="small text-muted">'.lang('cert_code').'：<strong>'.$certs[$client->hightech_cert_id]->cert_code.'</strong></span>';?></td>
+                        <td><span class="<?php echo $client->is_soft_comp == "Y" ? 'text-success' : 'text-danger'; ?>"><?php echo $client->is_soft_comp == "Y" ? lang('yes') : lang('no'); ?></span><?php if(!empty($client->soft_comp_cert_id)) echo '<br/><span class="small text-muted">'.lang('cert_code').'：<strong>'.$certs[$client->soft_comp_cert_id]->cert_code.'</strong></span>';?></td>
                         <td><?php echo !empty($client->level1) ? $level1[$client->level1] : lang('nope'); ?></td>
                         <td><?php echo !empty($client->area)?$client->area : lang('nope'); ?></td>
-                        <td><?php echo $client->staff; ?></td>
+                        <td>
+                            <?php echo $client->staff; ?><br/>
+                            <span class="text-info small"><?php echo $progress[$client->progress];?><br></span>
+                            <span class="text-warning small"><?php echo $status[$client->status];?></span>
+                        </td>
                         <td><?php
                             if(isset($client->marketing_log)){
                                 foreach($client->marketing_log as $ml_key=>$ml){

@@ -101,9 +101,9 @@
                     </div>
                 </div>
                 <div class="form-group<?php if($client->is_hightech == 'Y') echo ' normal_show'; ?>" id="high_tech_cert_info">
-                    <?php echo form_label(lang('hight_tech_cert_code').'：', 'htcc', array('class' => 'col-sm-3 control-label')); ?>
+                    <?php echo form_label(lang('high_tech_cert_code').'：', 'htcc', array('class' => 'col-sm-3 control-label')); ?>
                     <div class="col-sm-9">
-                        <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'htcc', 'placeholder' => lang('hight_tech_cert_code'), 'name' => 'hight_tech_cert_code', 'value' => $certs['H']->cert_code)); ?>
+                        <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'htcc', 'placeholder' => lang('high_tech_cert_code'), 'name' => 'high_tech_cert_code', 'value' => isset($certs['H']->cert_code) ? $certs['H']->cert_code : '')); ?>
                     </div>
                 </div>
                 <div class="form-group">
@@ -122,11 +122,19 @@
                 <div class="form-group<?php if($client->is_soft_comp == 'Y') echo ' normal_show'; ?>" id="soft_comp_cert_info">
                     <?php echo form_label(lang('soft_comp_cert_code').'：', 'scc', array('class' => 'col-sm-3 control-label')); ?>
                     <div class="col-sm-9">
-                        <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'scc', 'placeholder' => lang('soft_comp_cert_code'), 'name' => 'soft_comp_cert_code', 'value' => $certs['S']->cert_code)); ?>
+                        <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'scc', 'placeholder' => lang('soft_comp_cert_code'), 'name' => 'soft_comp_cert_code', 'value' => isset($certs['S']->cert_code) ? $certs['S']->cert_code : '')); ?>
                     </div>
                 </div>
             </div>
         </div>
-        <?php echo form_submit('save_client', lang('submit'), 'class="btn btn-primary btn-lg btn-block"') ?>
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <a href="<?php echo site_url('client/'.$client->id); ?>" class="btn btn-danger btn-lg btn-block"><?php echo lang('cancel'); ?></a>
+            </div>
+            <div class="col-md-9 text-center">
+                <?php echo form_submit('save_client', lang('submit'), 'class="btn btn-primary btn-lg btn-block"') ?>
+            </div>
+        </div>
+        <br/>
     </form>
 </div>

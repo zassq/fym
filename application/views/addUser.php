@@ -58,5 +58,6 @@
             </div>
         </div>
         <?php echo form_submit('saveUser', lang('submit'), 'class="btn btn-primary btn-lg btn-block"') ?>
+        <br/>
     </form>
 </div>

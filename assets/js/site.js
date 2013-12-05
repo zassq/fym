@@ -31,6 +31,7 @@ $(function(){
     }
     if($('.sorting_table').length > 0){
         $('.sorting_table').dataTable({
+            "iDisplayLength" : 5,
             "oLanguage": {
                 "sUrl": "/assets/dataTable-zh.txt"
             },

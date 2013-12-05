@@ -9,17 +9,25 @@
 	</td>
 	<td>
 		{{#if existed_client}}
-		Y
+		<span class="text-success">是</span>
 		{{else}}
-		N
+		<span class="text-danger">否</span>
 		{{/if}}
 	</td>
 	<td>
 		{{#compare is_hightech 'Y'}}
-		Y
+			<span class="text-success">是</span>
+			{{#if hightech_cert_code}}
+				<br />
+				<span class="small text-muted">高新证书：{{hightech_cert_code.H}}</span>
+			{{/if}}
+			{{#if soft_comp_cert_code}}
+				<br />
+				<span class="small text-muted">软企证书：{{soft_comp_cert_code.S}}</span>
+			{{/if}}
 		{{/compare}}
 		{{#compare is_hightech 'N'}}
-		N
+		<span class="text-danger">否</span>
 		{{/compare}}
 	</td>
 	<td>

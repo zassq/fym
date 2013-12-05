@@ -8,7 +8,7 @@ class Clients_controller extends CI_Controller {
         parent::__construct();
 
         #echo '<pre>';var_dump(Progress::get());die();
-        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT){
+        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT && false){
             $sections = array(
                 'benchmarks' => TRUE, 'memory_usage' => TRUE,
                 'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => FALSE, 'queries' => TRUE,
@@ -58,7 +58,7 @@ class Clients_controller extends CI_Controller {
             if($this->form_validation->run()){
                 $new_client = new Clients();
                 $new_client->populate($this->input->post());
-                unset($new_client->hight_tech_cert_code);
+                unset($new_client->high_tech_cert_code);
                 unset($new_client->soft_comp_cert_code);
                 unset($new_client->save_client);
                 unset($new_client->ml_log);
@@ -67,10 +67,10 @@ class Clients_controller extends CI_Controller {
                 unset($new_client->ml_date);
                 unset($new_client->marketing_log);
                 # high tect cert
-                if($this->input->post('is_hightech') == 'Y' && $this->input->post('hight_tech_cert_code') != ''){
+                if($this->input->post('is_hightech') == 'Y' && $this->input->post('high_tech_cert_code') != ''){
                     $hightechcert = new Certs();
                     $hightechcert->cert_type = 'H';
-                    $hightechcert->cert_code = $this->input->post('hight_tech_cert_code');
+                    $hightechcert->cert_code = $this->input->post('high_tech_cert_code');
                     $hightechcert->save();
                     $new_client->hightech_cert_id = $hightechcert->cert_id;
                 }
@@ -174,6 +174,7 @@ class Clients_controller extends CI_Controller {
         $upload_config['allowed_types'] = 'csv';
         $upload_config['max_size'] = '50000';
         $this->load->library('upload', $upload_config);
+
         if($this->upload->do_upload($clist)){
             $data = $this->upload->data();
             $this->load->library('fymcsv');
@@ -219,9 +220,9 @@ class Clients_controller extends CI_Controller {
                     }
                     $tmp_return->client_id = $ul_items->existed_client_id;
                     $tmp_return->is_hightech = $tmp_client->is_hightech;
-                    $tmp_return->hightech_cert_id = $tmp_client->hightech_cert_id;
+                    $tmp_return->hightech_cert_code = !empty($tmp_client->hightech_cert_id) ? Certs::get_certs_by_id($tmp_client->hightech_cert_id) : NULL;
                     $tmp_return->is_soft_comp = $tmp_client->is_soft_comp;
-                    $tmp_return->soft_comp_cert_id = $tmp_client->soft_comp_cert_id;
+                    $tmp_return->soft_comp_cert_code = !empty($tmp_client->soft_comp_cert_id) ? Certs::get_certs_by_id($tmp_client->soft_comp_cert_id) : NULL;
                 }
                 $return_json[] = $tmp_return;
                 unset($tmp_client);
@@ -287,7 +288,7 @@ class Clients_controller extends CI_Controller {
 
             if($this->form_validation->run()){
                 $new_client->populate($this->input->post());
-                unset($new_client->hight_tech_cert_code);
+                unset($new_client->high_tech_cert_code);
                 unset($new_client->soft_comp_cert_code);
                 unset($new_client->save_client);
                 unset($new_client->ml_log);
@@ -296,11 +297,11 @@ class Clients_controller extends CI_Controller {
                 unset($new_client->ml_date);
                 unset($new_client->marketing_log);
                 # high tect cert
-                if($this->input->post('is_hightech') == 'Y' && $this->input->post('hight_tech_cert_code') != ''){
+                if($this->input->post('is_hightech') == 'Y' && $this->input->post('high_tech_cert_code') != ''){
                     $hightechcert = new Certs();
                     $hightechcert->cert_id = $old_client->hightech_cert_id;
                     $hightechcert->cert_type = 'H';
-                    $hightechcert->cert_code = $this->input->post('hight_tech_cert_code');
+                    $hightechcert->cert_code = $this->input->post('high_tech_cert_code');
                     $hightechcert->save();
                     $new_client->hightech_cert_id = $hightechcert->cert_id;
                 }elseif(!empty($old_client->hightech_cert_id)){

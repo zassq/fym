@@ -101,9 +101,9 @@
                     </div>
                 </div>
                 <div class="form-group" id="high_tech_cert_info">
-                    <?php echo form_label(lang('hight_tech_cert_code').'：', 'htcc', array('class' => 'col-sm-3 control-label')); ?>
+                    <?php echo form_label(lang('high_tech_cert_code').'：', 'htcc', array('class' => 'col-sm-3 control-label')); ?>
                     <div class="col-sm-9">
-                        <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'htcc', 'placeholder' => lang('hight_tech_cert_code'), 'name' => 'hight_tech_cert_code')); ?>
+                        <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'htcc', 'placeholder' => lang('high_tech_cert_code'), 'name' => 'high_tech_cert_code')); ?>
                     </div>
                 </div>
                 <div class="form-group">
@@ -168,5 +168,6 @@
             </div>
         </div>
         <?php echo form_submit('save_client', lang('submit'), 'class="btn btn-primary btn-lg btn-block"') ?>
+        <br/>
     </form>
 </div>

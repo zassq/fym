@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="/assets/images/favicon.png">
-
+    <base href="<?php echo site_url(); ?>"/>
     <title>客户管理系统</title>
 
     <!-- Bootstrap core CSS -->

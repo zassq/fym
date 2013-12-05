@@ -44,7 +44,7 @@
             <?php endif; ?>
             <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('hightech') ?></strong></span>
-                <span class="col-md-8"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('hight_tech_cert_code').'</span>：'.$certs['H']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
+                <span class="col-md-8"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('high_tech_cert_code').'</span>：'.$certs['H']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
             </p>
             <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('software_company') ?></strong></span>
@@ -130,7 +130,7 @@
                         <div class="well clearfix row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <?php echo form_label(lang('date').'：', 'ml_date_1', array('class' => 'col-sm-4 control-label')); ?>
+                                    <?php echo form_label(lang('date').'：<em>*</em>', 'ml_date_1', array('class' => 'col-sm-4 control-label')); ?>
                                     <div class="col-sm-8 input-group date marketing_log_date">
                                         <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'ml_date_1', 'placeholder' => lang('date'), 'name' => 'ml_date[]', 'data-format' => "YYYY-MM-DD")); ?>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
@@ -152,7 +152,7 @@
                                 <div class="form-group">
                                     <?php echo form_label(lang('marketing_log').'：', 'ml_log_1', array('class' => 'col-sm-5 control-label')); ?>
                                     <div class="col-sm-7">
-                                        <?php echo form_textarea(array('class' => 'form-control','id' => 'ml_log_1', 'placeholder' => lang('marketing_log'), 'name' => 'ml_log[]', 'rows' => '1')); ?>
+                                        <?php echo form_textarea(array('class' => 'form-control','id' => 'ml_log_1', 'placeholder' => lang('marketing_log'), 'name' => 'ml_log[]', 'rows' => '3')); ?>
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +164,7 @@
                         </div>
                     </div>
                 </div>
-                <?php echo form_submit('save_ml', lang('submit'), 'class="btn btn-primary btn-lg btn-block"') ?>
+                <?php echo form_submit('save_ml', lang('submit'), 'class="btn btn-primary btn-lg pull-right"') ?>
             </form>
         </div>
     </div>

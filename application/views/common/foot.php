@@ -24,6 +24,14 @@
 <?php endif; ?>
 </div>
 
+<div id="footer">
+    <div class="container">
+        <p class="text-muted credit">
+            <a href="<?php site_url('users/dash');?>"><?php echo lang('fym');?></a> Copyright &copy; <?php echo lang('fy'); ?>
+        </p>
+    </div>
+</div>
+
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="/assets/js/jquery-1.10.2.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
@@ -48,6 +56,9 @@
                 <script src="/assets/js/handlebars.runtime-v1.1.2.js"></script>
                 <script src="/assets/js/row.js"></script>
                 <script src="/assets/js/clients_filter.js"></script>
+                <?php break;
+            case 'dash':?>
+                <script src="/assets/js/dash.js"></script>
                 <?php break;
         }
     }

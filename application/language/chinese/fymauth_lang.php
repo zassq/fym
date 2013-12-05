@@ -1,4 +1,6 @@
 <?php
+$lang['fym'] = '凡义咨询客户管理系统';
+$lang['fy'] = '广州凡义商务信息咨询有限公司';
 $lang['id'] = '编号';
 $lang['name'] = '姓名';
 $lang['email'] = '电子邮件';
@@ -64,8 +66,9 @@ $lang['yes'] = "是";
 $lang['no'] = "否";
 $lang['hightech'] = "高新企业";
 $lang['software_company'] = "软件企业";
-$lang['hight_tech_cert_code'] = "高新证书编号";
+$lang['high_tech_cert_code'] = "高新证书编号";
 $lang['soft_comp_cert_code'] = "软企证书编号";
+$lang['cert_code'] = "证书编号";
 $lang['client_list'] = "客户列表";
 $lang['marketing_log'] = "跟进记录";
 $lang['add_new_ml'] = "添加新记录";
@@ -93,4 +96,5 @@ $lang['add_new_ml_log'] = '%s：添加%d条跟进记录';
 $lang['add_new_client_log'] = '%s';
 $lang['update_client_log'] = '修改“%s”客户信息';
 $lang['date_format'] = 'Y年m月d日';
+$lang['cancel'] = '取消';
 ?>

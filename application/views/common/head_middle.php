@@ -25,5 +25,5 @@
 </head>
 
 <body>
-
+    <div class="body">
 
