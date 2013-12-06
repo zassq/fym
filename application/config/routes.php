@@ -44,8 +44,11 @@ $route['404_override'] = '';
 
 # auth pages
 $route['users/(:any)'] = "users/$1";
+$route['view_profile'] = "users/view_profile";
 $route['user_update/(:num)'] = "users/user_update/$1";
 $route['user_delete/(:num)'] = "users/user_delete/$1";
+$route['user_get_client'] = "users/user_get_client";
+$route['user_get_history'] = "users/user_get_history";
 
 $route['clients/(:any)'] = "clients_controller/$1";
 $route['client/(:num)'] = "clients_controller/view/$1";

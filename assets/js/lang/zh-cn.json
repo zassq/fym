@@ -1,0 +1,14 @@
+{
+    "language":{
+        "zh-cn":{
+            "404error" : "404错误",
+            "transmission_error" : "网络错误，请联系管理员。",
+            "no_clients" : "您还没有添加过客户。",
+            "year" : "年",
+            "month" : "月",
+            "day" : "日",
+            "before_unload" : "如果现在离开本页面，所有未保存客户将丢失（可重新上传名单找回），确定离开吗？",
+            "no_histories" : "无近期活动"
+        }
+    }
+}

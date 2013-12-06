@@ -54,10 +54,15 @@
                 <script src="/assets/js/jquery.fileupload-process.min.js"></script>
                 <script src="/assets/js/jquery.fileupload-validate.min.js"></script>
                 <script src="/assets/js/handlebars.runtime-v1.1.2.js"></script>
-                <script src="/assets/js/row.js"></script>
+                <script src="/assets/js/templates/row.js"></script>
+                <script src="/assets/js/lang/jquery.lang.min.js"></script>
                 <script src="/assets/js/clients_filter.js"></script>
                 <?php break;
             case 'dash':?>
+                <script src="/assets/js/lang/jquery.lang.min.js"></script>
+                <script src="/assets/js/handlebars.runtime-v1.1.2.js"></script>
+                <script src="/assets/js/templates/clients.js"></script>
+                <script src="/assets/js/templates/histories.js"></script>
                 <script src="/assets/js/dash.js"></script>
                 <?php break;
         }

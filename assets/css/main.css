@@ -90,6 +90,9 @@ em{
 .bs-callout-danger p{
     color: #B40037;
 }
+.text-fy{
+    color: #B40037;
+}
 .bs-callout-warning {
     background-color: #faf8f0;
     border-color: #faebcc;
@@ -247,5 +250,8 @@ em{
 #footer {
     height: 60px;
     background-color: #f5f5f5;
+}
+.displayTable{
+    display: none;
 }
 

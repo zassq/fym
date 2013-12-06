@@ -7,6 +7,7 @@ class Home extends CI_Controller {
         $this->load->library('fymauth');
 
         if(!$this->fymauth->logged_in()) redirect('users/login');
+        else redirect('users/dash');
     }
     public function index()
     {

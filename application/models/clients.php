@@ -78,6 +78,7 @@ class Clients extends MY_Model{
     public $staff_id;
     public $staff;
     public $marketing_log;
+    public $created;
 
     public static function get_all_clients($mlClass){
         $c = new Clients();
@@ -110,6 +111,19 @@ class Clients extends MY_Model{
         $c = new Clients();
         $c->load($cid);
         return $c->name;
+    }
+
+    public function get_clients_by_staff_id($sid){
+        $query = $this->db->order_by('created desc')->get_where($this::DB_TABLE, array(
+            'staff_id' => $sid
+        ), 5, 0);
+        $return = array();
+        if($query){
+            foreach($query->result() as $row){
+                $return[] = $row;
+            }
+        }
+        return $return;
     }
 }
 

@@ -1,9 +1,10 @@
 $(function(){
     'use strict';
     var client_data;
+    var lang = new $.lang({lang_file: '/assets/js/lang/zh-cn.json'});
     $(document).on('uploadStateChange', stateChangeHandler);
     $(window).on('beforeunload', function(){
-        return '如果现在离开本页面，所有未保存客户将丢失（可重新上传名单找回），确定离开吗？';
+        return lang.show('before_unload');
     });
     $(window).on('unload', function(){
         // delete exist upload list?

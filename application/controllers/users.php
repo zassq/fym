@@ -2,9 +2,7 @@
 
 class Users extends CI_Controller {
 
-    public $head_data;
-    public $page_data;
-    public $foot_data;
+    public $data;
 
     public function __construct(){
         parent::__construct();
@@ -24,12 +22,8 @@ class Users extends CI_Controller {
 
         #if(!$this->fymauth->logged_in()) redirect('users/login');
         $this->userinfo = $this->session->userdata('user');
-        $this->head_data = array(
+        $this->data = array(
             'logged_in' => true,
-            'userinfo' => $this->userinfo,
-            'here' => ''
-        );
-        $this->page_data = array(
             'userinfo' => $this->userinfo,
             'access' => $this->config->item('access'),
             'usertype' => $this->config->item('usertype')
@@ -37,7 +31,7 @@ class Users extends CI_Controller {
 
         $site_message = $this->msg->getMsg();
         if($site_message){
-            $this->foot_data['site_message'] = $site_message;
+            $this->data['site_message'] = $site_message;
             unset($site_message);
         }
     }
@@ -52,12 +46,12 @@ class Users extends CI_Controller {
         $this->load->model('staff');
         $users = new Staff();
 
-        $this->page_data['users'] = $users->get();
+        $this->data['users'] = $users->get();
 
-        $this->head_data['here'] = 'users';
-        $this->load->view('common/head', $this->head_data);
-        $this->load->view('users', $this->page_data);
-        $this->load->view('common/foot', $this->foot_data);
+        $this->data['here'] = 'users';
+        $this->load->view('common/head', $this->data);
+        $this->load->view('users', $this->data);
+        $this->load->view('common/foot', $this->data);
     }
 
     public function addUser(){
@@ -66,7 +60,7 @@ class Users extends CI_Controller {
         if($this->input->post('saveUser')){
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('<div class="error">&gt;&gt; ', '</div>');
-            $this->page_data['error'] = '';
+            $this->data['error'] = '';
 
             $this->form_validation->set_rules('username', 'lang:username', 'required|alpha|is_unique['. $this->config->item('fymauth_users_table') .'.username]');
             $this->form_validation->set_rules('email', 'lang:email', 'required|valid_email');
@@ -88,27 +82,54 @@ class Users extends CI_Controller {
                     #$this->fymauth->login(set_value('username'), set_value('password'));
                     redirect('users');
                 }else{
-                    $this->page_data['error'] = $this->lang->line('error_add_user');
+                    $this->data['error'] = $this->lang->line('error_add_user');
                 }
             }
         }
 
         # get rid of 'admin' users if not admin
         if($this->userinfo->usertype != 'A'){
-            foreach($this->page_data['usertype'] as $k => $v){
-                if($k == 'A') unset($this->page_data['usertype'][$k]);
+            foreach($this->data['usertype'] as $k => $v){
+                if($k == 'A') unset($this->data['usertype'][$k]);
             }
-            foreach($this->page_data['access'] as $k => $v){
-                if($k == 'fullaccess') unset($this->page_data['access'][$k]);
+            foreach($this->data['access'] as $k => $v){
+                if($k == 'fullaccess') unset($this->data['access'][$k]);
             }
         }
 
-        if(!isset($this->page_data['error'])) $this->page_data['error'] ='';
-        $this->head_data['here'] = 'users';
+        if(!isset($this->data['error'])) $this->data['error'] ='';
+        $this->data['here'] = 'users';
 
-        $this->load->view('common/head', $this->head_data);
-        $this->load->view('addUser', $this->page_data);
-        $this->load->view('common/foot');
+        $this->load->view('common/head', $this->data);
+        $this->load->view('addUser', $this->data);
+        $this->load->view('common/foot', $this->data);
+    }
+
+    public function view_profile(){
+        if(!$this->fymauth->logged_in()) redirect('users/login');
+
+        $this->data['error'] = '';
+        if($this->input->post('saveUser')){
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('<div class="error">&gt;&gt; ', '</div>');
+            $this->data['error'] = '';
+
+            $this->form_validation->set_rules('password', 'lang:password', 'required|min_length['. $this->config->item('fymauth_password_min_length') .']');
+            $this->form_validation->set_rules('password2', 'lang:confirm_password', 'required|matches[password]');
+
+            if($this->form_validation->run()){
+                $new_password = set_value('password');
+                $this->fymauth->reset_password($this->userinfo->id, $new_password);
+                $this->msg->setMsg('I', $this->lang->line('success_update_password'));
+                redirect('users');
+            }
+        }
+
+        $this->data['here'] = 'users';
+        $this->load->helper('form');
+        $this->load->view('common/head', $this->data);
+        $this->load->view('user_view_profile', $this->data);
+        $this->load->view('common/foot', $this->data);
     }
 
     public function user_delete($uid){
@@ -137,7 +158,7 @@ class Users extends CI_Controller {
         $staff = new Staff();
         $staff->load($uid);
         unset($staff->password);
-        $this->page_data['staff'] = $staff;
+        $this->data['staff'] = $staff;
 
         if('S' == $this->userinfo->usertype && 'A' == $staff->usertype){
             $this->msg->setMsg('W', $this->lang->line('no_permission'));
@@ -147,7 +168,7 @@ class Users extends CI_Controller {
         if($this->input->post('saveUser')){
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('<div class="error">&gt;&gt; ', '</div>');
-            $this->page_data['error'] = '';
+            $this->data['error'] = '';
 
             #$this->form_validation->set_rules('username', 'lang:username', 'required|alpha|is_unique['. $this->config->item('fymauth_users_table') .'.username]');
             $this->form_validation->set_rules('email', 'lang:email', 'required|valid_email');
@@ -155,7 +176,7 @@ class Users extends CI_Controller {
 
             if($this->form_validation->run()){
                 $userdata = array(
-                    'id' => $this->page_data['staff']->id,
+                    'id' => $this->data['staff']->id,
                     'name' => set_value('name'),
                     'email' => set_value('email'),
                     'usertype' => $this->input->post('usertype'),
@@ -165,18 +186,18 @@ class Users extends CI_Controller {
                 if($this->fymauth->updateUser($userdata)){
                     redirect('users');
                 }else{
-                    $this->page_data['error'] = 'error';
+                    $this->data['error'] = 'error';
                 }
             }
         }
 
-        if(!isset($this->page_data['error'])) $this->page_data['error'] ='';
-        $this->head_data['here'] = 'users';
+        if(!isset($this->data['error'])) $this->data['error'] ='';
+        $this->data['here'] = 'users';
 
         $this->load->helper('form');
-        $this->load->view('common/head', $this->head_data);
-        $this->load->view('updateUser', $this->page_data);
-        $this->load->view('common/foot');
+        $this->load->view('common/head', $this->data);
+        $this->load->view('updateUser', $this->data);
+        $this->load->view('common/foot', $this->data);
 
     }
 
@@ -186,7 +207,7 @@ class Users extends CI_Controller {
 
             $this->load->library('form_validation');
             $this->load->helper('form');
-            $this->page_data['error'] = '';
+            $this->data['error'] = '';
 
             $this->form_validation->set_rules('username', 'lang:username', 'required');
             $this->form_validation->set_rules('password', 'lang:password', 'required');
@@ -196,16 +217,16 @@ class Users extends CI_Controller {
                     // Redirect to your logged in landing page here
                     redirect('users/dash');
                 } else {
-                    $this->page_data['error'] = $this->lang->line('wrong_password');
+                    $this->data['error'] = $this->lang->line('wrong_password');
                 }
             }
         }
 
-        if(!isset($this->page_data['error'])) $this->page_data['error'] ='';
+        if(!isset($this->data['error'])) $this->data['error'] ='';
         $this->load->helper('form');
         $this->load->view('common/head_middle');
-        $this->load->view('login', $this->page_data);
-        $this->load->view('common/foot');
+        $this->load->view('login', $this->data);
+        $this->load->view('common/foot', $this->data);
 
     }
 
@@ -219,10 +240,40 @@ class Users extends CI_Controller {
     public function dash(){
         if(!$this->fymauth->logged_in()) redirect('users/login');
 
-        $this->head_data['here'] = 'dash';
+        $this->data['here'] = 'dash';
 
-        $this->load->view('common/head', $this->head_data);
-        $this->load->view('dash', $this->page_data);
-        $this->load->view('common/foot', $this->foot_data);
+        $this->data['load_extra'] = array('dash');
+        $this->load->view('common/head', $this->data);
+        $this->load->view('dash', $this->data);
+        $this->load->view('common/foot', $this->data);
+    }
+
+    public function user_get_client(){
+        if(!$this->fymauth->logged_in()){
+            echo json_encode(array('type' => 'error', 'msg' => 'need_login'));
+        }else{
+            $this->load->model(array( 'clients', 'progress', 'status'));
+            $all_progress = $this->progress->get_value_pair('progress');
+            $all_status = $this->status->get_value_pair('status');
+            $clients = $this->clients->get_clients_by_staff_id($this->userinfo->id);
+            foreach($clients as $k=>$v){
+                $clients[$k]->progress_detail = $all_progress[$v->progress];
+                $clients[$k]->status_detail = $all_status[$v->status];
+            }
+            echo json_encode(array('type' => 'success', 'msg' => count($clients), 'clients' => $clients));
+        }
+    }
+
+    public function user_get_history(){
+        if(!$this->fymauth->logged_in()){
+            echo json_encode(array('type' => 'error', 'msg' => 'need_login'));
+        }else{
+            $this->load->model(array( 'staff_log'));
+            $logs = $this->staff_log->get_by_conditions(array('sid' => $this->userinfo->id), 5, 0, 'date desc');
+            foreach($logs as $k=>$v){
+                $logs[$k]->date = date($this->lang->line('date_format'), strtotime($v->date));
+            }
+            echo json_encode(array('type' => 'success', 'msg' => count($logs), 'histories' => $logs));
+        }
     }
 }

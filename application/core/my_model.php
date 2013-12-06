@@ -87,6 +87,24 @@ class MY_Model extends CI_Model {
         return $ret_val;
     }
 
+    public function get_by_conditions($where= array(), $limit = 0, $offset = 0, $order_by = '') {
+        if(!empty($order_by)) $this->db->order_by($order_by);
+        if ($limit) {
+            $query = $this->db->get_where($this::DB_TABLE, $where, $limit, $offset);
+        }
+        else {
+            $query = $this->db->get_where($this::DB_TABLE, $where);
+        }
+        $ret_val = array();
+        $class = get_class($this);
+        foreach ($query->result() as $row) {
+            $model = new $class;
+            $model->populate($row);
+            $ret_val[$row->{$this::DB_TABLE_PK}] = $model;
+        }
+        return $ret_val;
+    }
+
     public function get_value_pair($value,$limit = 0, $offset = 0){
         if ($limit) {
             $query = $this->db->order_by($this::DB_TABLE_PK, 'asc')->get($this::DB_TABLE, $limit, $offset);

@@ -94,7 +94,7 @@
                 <?php endif; ?>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="<?php echo site_url('user/'.$userinfo->id); ?>" class="static bold" href="javascript:"><?php echo lang('welcome'); ?> <?php echo $userinfo->name ?></a></li>
+                <li><a href="<?php echo site_url('view_profile'); ?>" class="static bold" href="javascript:"><?php echo lang('welcome'); ?> <?php echo $userinfo->name ?></a></li>
                 <li><a href="<?php echo site_url('users/logout') ?>"><?php echo lang('logout') ?></a></li>
             </ul>
         </div><!--/.nav-collapse -->
