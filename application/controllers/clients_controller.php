@@ -82,6 +82,7 @@ class Clients_controller extends CI_Controller {
                     $softcompcert->save();
                     $new_client->soft_comp_cert_id = $softcompcert->cert_id;
                 }
+                $new_client->created = date('Y-m-d H:i:s', time());
                 $new_client->save();
                 $ml_date = $this->input->post('ml_date');
                 if(count($ml_date)> 0){
