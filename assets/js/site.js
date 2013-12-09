@@ -33,7 +33,7 @@ $(function(){
         $('.sorting_table').dataTable({
             "iDisplayLength" : 5,
             "oLanguage": {
-                "sUrl": "/assets/dataTable-zh.txt"
+                "sUrl": site_url+"assets/dataTable-zh.txt"
             },
             "aoColumnDefs": [
                 { "bSortable": false, "aTargets": [-1] }

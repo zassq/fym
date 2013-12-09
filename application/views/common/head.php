@@ -6,24 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/assets/images/favicon.png">
+    <link rel="shortcut icon" href="<?php echo site_url(); ?>assets/images/favicon.png">
     <base href="<?php echo site_url(); ?>"/>
     <title>客户管理系统</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <link href="/assets/css/bootstrap-theme.min.css" rel="stylesheet"> -->
+    <link href="<?php echo site_url(); ?>assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="<?php echo site_url(); ?>assets/css/bootstrap-theme.min.css" rel="stylesheet"> -->
 
     <!-- Custom styles for this template -->
-    <link href="/assets/css/main.css" rel="stylesheet">
+    <link href="<?php echo site_url(); ?>assets/css/main.css" rel="stylesheet">
     <?php if(isset($load_extra) && is_array($load_extra)){
         foreach($load_extra as $le){
             switch($le){
             case 'dataTables': ?>
-            <link href="/assets/css/bootstrap-dataTables.css" rel="stylesheet">
+            <link href="<?php echo site_url(); ?>assets/css/bootstrap-dataTables.css" rel="stylesheet">
             <?php break;
             case 'datatimepicker': ?>
-            <link href="/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+            <link href="<?php echo site_url(); ?>assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
             <?php break;
             case 'clients_filter': ?>
 
@@ -34,9 +34,12 @@
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="/assets/js/html5shiv.js"></script>
-    <script src="/assets/js/respond.min.js"></script>
+    <script src="<?php echo site_url(); ?>assets/js/html5shiv.js"></script>
+    <script src="<?php echo site_url(); ?>assets/js/respond.min.js"></script>
     <![endif]-->
+    <script>
+        var site_url = '<?php echo site_url();?>';
+    </script>
 </head>
 
 <body>
@@ -51,8 +54,8 @@
     <div class="noscript_inner iewarning">
         <h2><?php echo lang('ie_warning'); ?></h2>
         <div class="clearfix">
-            <a href="http://www.google.com/intl/zh-CN/chrome/" target="_blank" class="chrome pull-left"><img src="/assets/images/chrome.png" alt="Chrome"/><br /><?php echo lang('chrome'); ?></a>
-            <a href="http://www.firefox.com.cn/download/" target="_blank" class="firefox pull-left"><img src="/assets/images/firefox.png" alt="Chrome"/><br /><?php echo lang('firefox'); ?></a>
+            <a href="http://www.google.com/intl/zh-CN/chrome/" target="_blank" class="chrome pull-left"><img src="<?php echo site_url(); ?>assets/images/chrome.png" alt="Chrome"/><br /><?php echo lang('chrome'); ?></a>
+            <a href="http://www.firefox.com.cn/download/" target="_blank" class="firefox pull-left"><img src="<?php echo site_url(); ?>assets/images/firefox.png" alt="Chrome"/><br /><?php echo lang('firefox'); ?></a>
         </div>
     </div>
 </div>
@@ -69,7 +72,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="<?php echo site_url('users/dash'); ?>"><img src="/assets/images/logo.png" /></a>
+            <a class="navbar-brand" href="<?php echo site_url('users/dash'); ?>"><img src="<?php echo site_url(); ?>assets/images/logo.png" /></a>
         </div>
         <?php if(isset($logged_in)):  ?>
         <div class="collapse navbar-collapse">

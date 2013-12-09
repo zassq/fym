@@ -44,7 +44,7 @@ class Clients_controller extends CI_Controller {
     }
 
     public function index(){
-
+        redirect('users/dash');
     }
 
     public function add(){
@@ -347,5 +347,9 @@ class Clients_controller extends CI_Controller {
         $this->load->view('common/head', $this->data);
         $this->load->view('client_update', $this->data);
         $this->load->view('common/foot', $this->data);
+    }
+
+    function add_to_my_client(){
+        echo 'success';
     }
 }

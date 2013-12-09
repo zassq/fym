@@ -14,7 +14,7 @@
         <div class="col-md-6" id="user_client">
             <h3><?php echo lang('my_client'); ?> | <a href="<?php echo site_url('clients/add'); ?>" class="btn btn-primary"><?php echo lang('add_client') ?></a></h3>
             <div class="loading">
-                <h3><img src="/assets/images/loading.gif" alt="loading"/> <span class="text-fy"><?php echo lang('loading'); ?></span></h3>
+                <h3><img src="<?php echo site_url(); ?>assets/images/loading.gif" alt="loading"/> <span class="text-fy"><?php echo lang('loading'); ?></span></h3>
             </div>
             <div class="displayTable table-responsive">
                 <table class="table table-striped table-hover table-bordered">
@@ -34,7 +34,7 @@
         <div class="col-md-6" id="user_history">
             <h3><?php echo lang('my_history'); ?></h3>
             <div class="loading">
-                <h3><img src="/assets/images/loading.gif" alt="loading"/> <span class="text-fy"><?php echo lang('loading'); ?></span></h3>
+                <h3><img src="<?php echo site_url(); ?>assets/images/loading.gif" alt="loading"/> <span class="text-fy"><?php echo lang('loading'); ?></span></h3>
             </div>
             <div class="displayTable table-responsive">
                 <table class="table table-striped table-hover table-bordered">

@@ -104,4 +104,6 @@ $lang['my_history'] = '近期活动';
 $lang['view_all'] = '查看更多';
 $lang['update_password'] = '更新密码';
 $lang['success_update_password'] = '成功修改密码！';
+$lang['no_clients'] = '尚无客户！';
+$lang['select'] = '选择';
 ?>

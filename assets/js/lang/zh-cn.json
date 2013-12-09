@@ -8,7 +8,14 @@
             "month" : "月",
             "day" : "日",
             "before_unload" : "如果现在离开本页面，所有未保存客户将丢失（可重新上传名单找回），确定离开吗？",
-            "no_histories" : "无近期活动"
+            "no_histories" : "无近期活动",
+            "high_tech_cert" : "高新证书",
+            "soft_comp_cert" : "软企证书",
+            "yes" : "是",
+            "no" : "否",
+            "add_to_my_client" : "添至我的客户",
+            "adding" : "添加中...",
+            "added" : "已添加"
         }
     }
 }

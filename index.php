@@ -57,6 +57,7 @@ if (defined('ENVIRONMENT'))
  *
  */
 	$system_path = 'system214';
+if(ENVIRONMENT == 'production') $system_path = dirname(dirname(__FILE__)).'/system214';
 
 /*
  *---------------------------------------------------------------

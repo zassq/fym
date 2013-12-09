@@ -1,7 +1,7 @@
+var lang = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json'});
 $(function(){
     'use strict';
     var client_data;
-    var lang = new $.lang({lang_file: '/assets/js/lang/zh-cn.json'});
     $(document).on('uploadStateChange', stateChangeHandler);
     $(window).on('beforeunload', function(){
         return lang.show('before_unload');
@@ -38,7 +38,6 @@ $(function(){
             $.event.trigger({type:'uploadStateChange',currentState: 'analysing'});
             $('#upload_file_name_outer').stop(true,true).fadeOut();
             data.context = $('#client_filter_list_table > tbody');
-            console.log(data.result);
             if(typeof data.result.error != "undefined" && data.result.error != ''){
                 $.event.trigger({type:'uploadStateChange',currentState: data.result.error});
             }else if(typeof data.result.files != "undefined" && data.result.files != ''){
@@ -53,7 +52,64 @@ $(function(){
         }).on('fileuploadfail', function (e, data) {
             $.event.trigger({type:'uploadStateChange',currentState: 'error', error: data.errorThrown});
         });
+
+    Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
+        if (arguments.length < 3)
+            throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+        var operator = options.hash.operator || "==";
+
+        var operators = {
+            '==':		function(l,r) { return l == r; },
+            '===':	function(l,r) { return l === r; },
+            '!=':		function(l,r) { return l != r; },
+            '<':		function(l,r) { return l < r; },
+            '>':		function(l,r) { return l > r; },
+            '<=':		function(l,r) { return l <= r; },
+            '>=':		function(l,r) { return l >= r; },
+            'typeof':	function(l,r) { return typeof l == r; }
+        }
+
+        if (!operators[operator])
+            throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator);
+
+        var result = operators[operator](lvalue,rvalue);
+
+        if( result ) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+
+    });
+
+    Handlebars.registerHelper('lang_call', function(lang_string1){
+        if (arguments.length < 2)
+            throw new Error("Handlerbars Helper 'lang' needs 1 parameters");
+
+        console.log('123');
+        if ('' == lang)
+            throw new Error("Handlerbars Helper 'lang' needs jQuery Lang library");
+
+        return lang.show(lang_string1);
+    });
+
+    Handlebars.registerHelper('site_url', function(){
+        if(typeof site_url == 'undefined' || '' == site_url)
+            throw new Error("Handlerbars Helper 'lang' needs site_url parameter");
+        return site_url;
+    });
 });
+
+function addToMyClientList(item_id){
+    var el = $('#add_to_link_'+item_id);
+        //lang_display = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json'});
+    el.text(lang.show('adding'));
+    el.prop('disabled', true);
+    $.get(site_url+'add_to_my_client', item_id, function(msg){
+        if(msg == 'success')
+            el.text(lang.show('added'));
+    });
+}
 
 (function($){
     'use strict';
@@ -122,35 +178,6 @@ function stateChangeHandler(e){
             break;
     }
 }
-
-Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
-    if (arguments.length < 3)
-        throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
-    operator = options.hash.operator || "==";
-
-    var operators = {
-        '==':		function(l,r) { return l == r; },
-        '===':	function(l,r) { return l === r; },
-        '!=':		function(l,r) { return l != r; },
-        '<':		function(l,r) { return l < r; },
-        '>':		function(l,r) { return l > r; },
-        '<=':		function(l,r) { return l <= r; },
-        '>=':		function(l,r) { return l >= r; },
-        'typeof':	function(l,r) { return typeof l == r; }
-    }
-
-    if (!operators[operator])
-        throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator);
-
-    var result = operators[operator](lvalue,rvalue);
-
-    if( result ) {
-        return options.fn(this);
-    } else {
-        return options.inverse(this);
-    }
-
-});
 
 
 

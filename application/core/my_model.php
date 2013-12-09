@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('CI_Model')) { class CI_Model extends Model { } }
 
 class MY_Model extends CI_Model {
     const DB_TABLE = 'abstract';
@@ -78,11 +79,13 @@ class MY_Model extends CI_Model {
             $query = $this->db->get($this::DB_TABLE);
         }
         $ret_val = array();
-        $class = get_class($this);
-        foreach ($query->result() as $row) {
-            $model = new $class;
-            $model->populate($row);
-            $ret_val[$row->{$this::DB_TABLE_PK}] = $model;
+        if($query){
+            $class = get_class($this);
+            foreach ($query->result() as $row) {
+                $model = new $class;
+                $model->populate($row);
+                $ret_val[$row->{$this::DB_TABLE_PK}] = $model;
+            }
         }
         return $ret_val;
     }
@@ -96,11 +99,13 @@ class MY_Model extends CI_Model {
             $query = $this->db->get_where($this::DB_TABLE, $where);
         }
         $ret_val = array();
-        $class = get_class($this);
-        foreach ($query->result() as $row) {
-            $model = new $class;
-            $model->populate($row);
-            $ret_val[$row->{$this::DB_TABLE_PK}] = $model;
+        if($query){
+            $class = get_class($this);
+            foreach ($query->result() as $row) {
+                $model = new $class;
+                $model->populate($row);
+                $ret_val[$row->{$this::DB_TABLE_PK}] = $model;
+            }
         }
         return $ret_val;
     }
@@ -113,8 +118,10 @@ class MY_Model extends CI_Model {
             $query = $this->db->order_by($this::DB_TABLE_PK, 'asc')->get($this::DB_TABLE);
         }
         $return = array();
-        foreach($query->result_array() as $row)
-            $return[$row[$this::DB_TABLE_PK]] = $row[$value];
+        if($query){
+            foreach($query->result_array() as $row)
+                $return[$row[$this::DB_TABLE_PK]] = $row[$value];
+        }
         return $return;
     }
 }

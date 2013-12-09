@@ -1,5 +1,5 @@
 <div class="container">
-    <h1 class="signin_h1"><a href="<?php echo site_url(); ?>"><img src="/assets/images/logo.png" /><span>   客户管理系统</span></a></h1>
+    <h1 class="signin_h1"><a href="<?php echo site_url(); ?>"><img src="<?php echo site_url(); ?>assets/images/logo.png" /><span>   客户管理系统</span></a></h1>
     <form class="form-signin" method="post">
         <h2 class="form-signin-heading">请登录</h2>
         <?php if($error) echo '<div class="bs-callout bs-callout-danger"><p>'. $error .'</p></div>'; ?>

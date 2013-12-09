@@ -2,6 +2,8 @@
     <h1><?php echo lang('client_list'); ?></h1>
     <p><a href="<?php echo site_url('clients/add'); ?>" class="btn btn-primary"><?php echo lang('add_client') ?></a></p>
 
+
+    <?php if(!empty($clients)):?>
     <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered sorting_table">
             <thead>
@@ -56,4 +58,7 @@
             </tbody>
         </table>
     </div>
+    <?php else: ?>
+    <h2><?php echo lang('no_clients'); ?></h2>
+    <?php endif; ?>
 </div>

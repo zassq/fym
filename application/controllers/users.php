@@ -121,7 +121,7 @@ class Users extends CI_Controller {
                 $new_password = set_value('password');
                 $this->fymauth->reset_password($this->userinfo->id, $new_password);
                 $this->msg->setMsg('I', $this->lang->line('success_update_password'));
-                redirect('users');
+                redirect('users/dash');
             }
         }
 

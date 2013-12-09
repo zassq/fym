@@ -1,8 +1,8 @@
 $(function(){
     'use strict';
-    var lang = new $.lang({lang_file: '/assets/js/lang/zh-cn.json'});
+    var lang = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json'});
     $.ajax({
-        url: '/user_get_client',
+        url: site_url+'user_get_client',
         context: $('#user_client'),
         dataType: 'json',
         statusCode: {
@@ -23,7 +23,7 @@ $(function(){
         }
     });
     $.ajax({
-        url: '/user_get_history',
+        url: site_url+'user_get_history',
         context: $('#user_history'),
         dataType: 'json',
         statusCode: {
@@ -52,7 +52,7 @@ $(function(){
             loading = o.find('.loading');
         d = d || null;
         if('e' == t){
-            msg = $('<div class="col-md-12"><p><img src="/assets/images/warning.png" alt="not found"/>&nbsp;&nbsp;<span class="text-danger">'+lang.show(m)+'</span></p></div>');
+            msg = $('<div class="col-md-12"><p><img src="'+site_url+'assets/images/warning.png" alt="not found"/>&nbsp;&nbsp;<span class="text-danger">'+lang.show(m)+'</span></p></div>');
             loading.fadeOut(function(){display.empty().append(msg).fadeIn();});
         }else if('g' == t){
             var tables = display.find('tbody');

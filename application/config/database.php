@@ -73,9 +73,9 @@ elseif(ENVIRONMENT == 'testing'){
 elseif(ENVIRONMENT == 'production'){
 # production db vars
     $db['default']['hostname'] = 'localhost';
-    $db['default']['username'] = 'u117648';
-    $db['default']['password'] = 'Gw3aYOvj';
-    $db['default']['database'] = 'u117648_keji52';
+    $db['default']['username'] = 'zassqzzb';
+    $db['default']['password'] = 'ra1n1ng52fyzx';
+    $db['default']['database'] = 'zassqzzb';
     $db['default']['db_debug'] = FALSE;
     $db['default']['swap_pre'] = '';
     $db['default']['autoinit'] = TRUE;

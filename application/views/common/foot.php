@@ -33,41 +33,40 @@
 </div>
 
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/assets/js/jquery-1.10.2.min.js"></script>
-<script src="/assets/js/bootstrap.min.js"></script>
+<script src="<?php echo site_url(); ?>assets/js/jquery-1.10.2.min.js"></script>
+<script src="<?php echo site_url(); ?>assets/js/bootstrap.min.js"></script>
+<script src="<?php echo site_url(); ?>assets/js/lang/jquery.lang.min.js"></script>
 <?php if(isset($load_extra) && is_array($load_extra)){
     foreach($load_extra as $le){
         switch($le){
             case 'dataTables': ?>
-                <script src="/assets/js/jquery.dataTables.min.js"></script>
-                <script src="/assets/js/bootstrap-dataTables.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/jquery.dataTables.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/bootstrap-dataTables.min.js"></script>
             <?php break;
             case 'datatimepicker': ?>
-                <script src="/assets/js/moment.min.js"></script>
-                <script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
-                <script src="/assets/js/bootstrap-datetimepicker.zh-CN.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/moment.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/bootstrap-datetimepicker.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/bootstrap-datetimepicker.zh-CN.min.js"></script>
             <?php break;
             case 'clients_filter': ?>
-                <script src="/assets/js/jquery.ui.widget.min.js"></script>
-                <script src="/assets/js/jquery.iframe-transport.min.js"></script>
-                <script src="/assets/js/jquery.fileupload.min.js"></script>
-                <script src="/assets/js/jquery.fileupload-process.min.js"></script>
-                <script src="/assets/js/jquery.fileupload-validate.min.js"></script>
-                <script src="/assets/js/handlebars.runtime-v1.1.2.js"></script>
-                <script src="/assets/js/templates/row.js"></script>
-                <script src="/assets/js/lang/jquery.lang.min.js"></script>
-                <script src="/assets/js/clients_filter.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/jquery.ui.widget.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/jquery.iframe-transport.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/jquery.fileupload.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/jquery.fileupload-process.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/jquery.fileupload-validate.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/handlebars.runtime-v1.1.2.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/templates/row.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/clients_filter.js"></script>
                 <?php break;
             case 'dash':?>
-                <script src="/assets/js/lang/jquery.lang.min.js"></script>
-                <script src="/assets/js/handlebars.runtime-v1.1.2.js"></script>
-                <script src="/assets/js/templates/clients.js"></script>
-                <script src="/assets/js/templates/histories.js"></script>
-                <script src="/assets/js/dash.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/handlebars.runtime-v1.1.2.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/templates/clients.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/templates/histories.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/dash.js"></script>
                 <?php break;
         }
     }
 }?>
-<script src="/assets/js/site.js"></script>
+<script src="<?php echo site_url(); ?>assets/js/site.js"></script>
 </body>
 </html>

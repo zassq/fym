@@ -37,6 +37,7 @@
             <table id="client_filter_list_table" class="table table-striped table-hover table-bordered">
                 <thead>
                     <tr>
+                        <td><?php echo lang('select'); ?></td>
                         <td><?php echo lang('company_name'); ?></td>
                         <td><?php echo lang('already_client'); ?></td>
                         <td><?php echo lang('already_hightech'); ?></td>

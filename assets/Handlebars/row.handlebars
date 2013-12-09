@@ -1,37 +1,47 @@
 {{#each files}}
 <tr>
 	<td>
+		<input type="checkbox" name="export[{{item_id}}]" />
+	</td>
+	<td id="client_name_{{item_id}}">
 		{{#if existed_client}}
-		<a href="/client/{{client_id}}">{{company_name}}</a>
+		<a href="{{#site_url}}{{/site_url}}client/{{client_id}}">{{company_name}}</a>
 		{{else}}
 		{{company_name}}
 		{{/if}}
 	</td>
-	<td>
+	<td id="existed_client_{{item_id}}">
 		{{#if existed_client}}
-		<span class="text-success">是</span>
+		<span class="text-success">{{#lang_call 'yes'}}{{/lang_call}}</span>
 		{{else}}
-		<span class="text-danger">否</span>
+		<span class="text-danger">{{#lang_call 'no'}}{{/lang_call}}</span>
+		{{/if}}
+	</td>
+	<td id="high_tech_{{item_id}}">
+		{{#if existed_client}}
+			{{#compare is_hightech 'Y'}}
+				<span class="text-success">{{#lang_call 'yes'}}{{/lang_call}}</span>
+				{{#if hightech_cert_code}}
+					<br />
+					<span class="small text-muted">{{#lang_call 'high_tech_cert'}}{{/lang_call}}：{{hightech_cert_code.H}}</span>
+				{{/if}}
+				{{#if soft_comp_cert_code}}
+					<br />
+					<span class="small text-muted">{{#lang_call 'soft_comp_cert'}}{{/lang_call}}：{{soft_comp_cert_code.S}}</span>
+				{{/if}}
+			{{/compare}}
+			{{#compare is_hightech 'N'}}
+				<span class="text-danger">{{#lang_call 'no'}}{{/lang_call}}</span>
+			{{/compare}}
+		{{else}}
+			<span class="text-danger">{{#lang_call 'no'}}{{/lang_call}}</span>
 		{{/if}}
 	</td>
 	<td>
-		{{#compare is_hightech 'Y'}}
-			<span class="text-success">是</span>
-			{{#if hightech_cert_code}}
-				<br />
-				<span class="small text-muted">高新证书：{{hightech_cert_code.H}}</span>
-			{{/if}}
-			{{#if soft_comp_cert_code}}
-				<br />
-				<span class="small text-muted">软企证书：{{soft_comp_cert_code.S}}</span>
-			{{/if}}
-		{{/compare}}
-		{{#compare is_hightech 'N'}}
-		<span class="text-danger">否</span>
-		{{/compare}}
-	</td>
-	<td>
-	balabala
+		{{#if existed_client}}
+		{{else}}
+			<button type="button" class="btn btn-default" onclick="javascript: addToMyClientList({{item_id}});" id="add_to_link_{{item_id}}">{{#lang_call 'add_to_my_client'}}{{/lang_call}}</button>
+		{{/if}}
 	</td>
 </tr>
 {{/each}}
