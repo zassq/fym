@@ -84,9 +84,10 @@ class Clients extends MY_Model{
         $c = new Clients();
         $all = $c->get();
         if(!empty($all)){
+            $client_ids = array_keys($all);
             $all_ml = $mlClass->get(0, 0, 'date desc');
             foreach($all_ml as $ml){
-                $all[$ml->cid]->marketing_log[] = $ml;
+                if(in_array($ml->cid, $client_ids)) $all[$ml->cid]->marketing_log[] = $ml;
             }
         }
         return $all;

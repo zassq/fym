@@ -1,7 +1,7 @@
 {{#each files}}
 <tr>
 	<td>
-		<input type="checkbox" name="export[{{item_id}}]" />
+		<input type="checkbox" name="export[{{item_id}}]" value="{{item_id}}" />
 	</td>
 	<td id="client_name_{{item_id}}">
 		{{#if existed_client}}

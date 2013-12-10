@@ -350,6 +350,36 @@ class Clients_controller extends CI_Controller {
     }
 
     function add_to_my_client(){
-        echo 'success';
+        if($this->input->get('item_id')){
+            $this->load->model(array('upload_list', 'upload_list_items'));
+            $ul_item = new upload_list_items();
+            $return = new stdClass();
+            $ul_item->load($this->input->get('item_id'));
+            if($ul_item->existed_client_id != 0){
+                $return->client_id = $ul_item->existed_client_id;
+                $client = new Clients();
+                $client->load($return->client_id);
+                $return->is_high_tech = $client->is_hightech;
+            }else{
+                $client = new Clients();
+                $client->name = $ul_item->company_name;
+                $client->created = date('Y-m-d H:i:s', time());
+                $client->staff = $this->userinfo->name;
+                $client->staff_id = $this->userinfo->id;
+                $client->is_hightech = 'N';
+                $client->is_soft_comp = 'N';
+                $client->progress = 1;
+                $client->status = 1;
+                $client->note = sprintf($this->lang->line('load_from_import'), $this->userinfo->name, date($this->lang->line('date_format'), time()));
+                unset($client->marketing_log);
+                $client->save();
+                $return->client_id = $client->id;
+                $return->is_high_tech = $client->is_hightech;
+            }
+            $return->company_name = $ul_item->company_name;
+            echo json_encode(array('msg' => 'success', 'data' => $return));
+        }else{
+            echo json_encode(array('msg' => 'error'));
+        }
     }
 }

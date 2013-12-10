@@ -1,10 +1,13 @@
-var lang = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json'});
+var on_unload,
+    lang = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json', afterInit: function(){on_unload = this.show('before_unload');}});
+
+
 $(function(){
     'use strict';
     var client_data;
     $(document).on('uploadStateChange', stateChangeHandler);
     $(window).on('beforeunload', function(){
-        return lang.show('before_unload');
+        return on_unload;
     });
     $(window).on('unload', function(){
         // delete exist upload list?
@@ -44,7 +47,7 @@ $(function(){
                 client_data = data.result.files;
                 $.event.trigger({type:'uploadStateChange',currentState: 'analyse_done'});
                 data.context = $('#client_filter_list_table').find('tbody');
-                data.context.append(Handlebars.templates['row'](data.result));
+                data.context.prepend(Handlebars.templates['row'](data.result));
                 $('#client_filter_list').fadeIn();
             }else{
                 $.event.trigger({type:'uploadStateChange',currentState: 'error'});
@@ -86,7 +89,6 @@ $(function(){
         if (arguments.length < 2)
             throw new Error("Handlerbars Helper 'lang' needs 1 parameters");
 
-        console.log('123');
         if ('' == lang)
             throw new Error("Handlerbars Helper 'lang' needs jQuery Lang library");
 
@@ -98,17 +100,38 @@ $(function(){
             throw new Error("Handlerbars Helper 'lang' needs site_url parameter");
         return site_url;
     });
+
+    $('#export_submit').click(function(e){
+        e.preventDefault();
+        var cs = $('input:checkbox:checked');
+        if(cs.length > 0){
+            on_unload = '';
+            console.log(on_unload);
+            $('form').submit();
+        }else{
+            alert(lang.show('no_select'));
+        }
+    });
 });
 
 function addToMyClientList(item_id){
-    var el = $('#add_to_link_'+item_id);
+    var el = $('#add_to_link_'+item_id),
+        cname = $('#client_name_'+item_id),
+        eclient = $('#existed_client_'+item_id),
+        ht = $('#high_tech_'+item_id);
         //lang_display = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json'});
     el.text(lang.show('adding'));
     el.prop('disabled', true);
-    $.get(site_url+'add_to_my_client', item_id, function(msg){
-        if(msg == 'success')
+    $.get(site_url+'add_to_my_client', {item_id: item_id}, function(res){
+        if(res.msg == 'success'){
             el.text(lang.show('added'));
-    });
+            cname.empty().append('<a href="'+site_url+'client/'+res.data.client_id+'">'+res.data.company_name+'</a>');
+            eclient.empty().append('<span class="text-success">'+lang.show('yes')+'</span>');
+            ht.empty().append('<span class="'+(res.data.is_is_high_tech == 'Y' ? 'text-success' : 'text-danger')+'">'+(res.data.is_is_high_tech == 'Y' ? lang.show('yes') : lang.show('no'))+'</span>');
+        }else{
+            el.text(lang.show('upload_error'));
+        }
+    }, 'json');
 }
 
 (function($){

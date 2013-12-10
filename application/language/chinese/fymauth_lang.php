@@ -105,5 +105,8 @@ $lang['view_all'] = '查看更多';
 $lang['update_password'] = '更新密码';
 $lang['success_update_password'] = '成功修改密码！';
 $lang['no_clients'] = '尚无客户！';
-$lang['select'] = '选择';
+$lang['select_export'] = '选择导出';
+$lang['load_from_import'] = '%s于%s由“新客户筛选”导入';
+$lang['export_name_list'] = '名单导出';
+$lang['export'] = '导出';
 ?>

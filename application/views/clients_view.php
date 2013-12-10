@@ -26,7 +26,7 @@
             </p>
             <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('level1') ?></strong></span>
-                <span class="col-md-8"><?php echo $level1[$client->level1]; ?></span>
+                <span class="col-md-8"><?php if($client->level1) echo $level1[$client->level1]; else echo lang('nope'); ?></span>
             </p>
             <p class="clearfix">
                 <span class="col-md-4"><strong><?php echo lang('progress') ?></strong></span>
