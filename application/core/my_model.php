@@ -46,7 +46,7 @@ class MY_Model extends CI_Model {
      */
     public function delete() {
         $this->db->delete($this::DB_TABLE, array(
-           $this::DB_TABLE_PK => $this->{$this::DB_TABLE_PK}, 
+           $this::DB_TABLE_PK => $this->{$this::DB_TABLE_PK},
         ));
         unset($this->{$this::DB_TABLE_PK});
     }

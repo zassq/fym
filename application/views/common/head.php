@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="shortcut icon" href="<?php echo site_url(); ?>assets/images/favicon.png">
     <base href="<?php echo site_url(); ?>"/>
     <title>客户管理系统</title>

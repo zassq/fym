@@ -13,7 +13,7 @@ $(function(){
         // delete exist upload list?
     });
     $('#new_client_list').fileupload({
-        url: '/client_filter_upload',
+        url: site_url+'client_filter_upload',
         dataType: 'json',
         autoUpload: false,
         acceptFileTypes: /(\.|\/)(csv)$/i,
