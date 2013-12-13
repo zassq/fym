@@ -10,6 +10,12 @@
 |
 */
 
+/*$hook['post_controller_constructor'][] = array(
+    'class' => 'FymHook',
+    'function' => 'ConfigHook',
+    'filename' => 'Fymhook.php',
+    'filepath' => 'hooks'
+);*/
 
 
 /* End of file hooks.php */

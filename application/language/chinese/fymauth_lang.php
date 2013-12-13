@@ -51,7 +51,7 @@ $lang['clients_mgt'] = "客户管理";
 $lang['company_name'] = "公司名称";
 $lang['address'] = "地址";
 $lang['contact'] = "联系人";
-$lang['phone'] = "联系电话";
+$lang['phone'] = "联系方式";
 $lang['progress'] = "进度";
 $lang['status'] = "意向";
 $lang['area'] = "地区";
@@ -109,4 +109,13 @@ $lang['select_export'] = '选择导出';
 $lang['load_from_import'] = '%s于%s由“新客户筛选”导入';
 $lang['export_name_list'] = '名单导出';
 $lang['export'] = '导出';
+
+
+$lang['fullaccess'] = '管理员权限';
+$lang['manager'] = '经理权限';
+$lang['staff'] = '员工权限';
+$lang['A'] = '管理员';
+$lang['S'] = '员工';
+
+
 ?>

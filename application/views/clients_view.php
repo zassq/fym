@@ -8,15 +8,15 @@
     <div class="row">
         <div class="col-md-6">
             <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('company_details') ?></strong></span>
-                <span class="col-md-8">
+                <div class="col-md-4"><strong><?php echo lang('company_details') ?></strong></div>
+                <div class="col-md-8">
                     <?php if(!empty($client->address)) echo $client->address."<br />"; ?>
                     <?php if(!empty($client->contact)):?><span class="small"><?php echo lang('contact') ?></span>：<?php echo $client->contact; ?><br/><?php endif;?>
                     <?php if(!empty($client->phone1)) echo $client->phone1."<br />"; ?>
                     <?php if(!empty($client->phone2)) echo $client->phone2."<br />"; ?>
                     <?php if(!empty($client->phone3)) echo $client->phone3."<br />"; ?>
-                    <?php if(!empty($client->note)) echo $client->note.""; ?>
-                </span>
+                    <?php if(!empty($client->note)) echo nl2br($client->note).""; ?>
+                </div>
             </p>
         </div>
         <div class="col-md-6">
@@ -109,7 +109,7 @@
                                 <td><?php echo $k+1;?></td>
                                 <td><?php echo date(lang('date_format'), strtotime($ml_item->date));?></td>
                                 <td><?php echo $ml_item->staff;?></td>
-                                <td><?php echo $ml_item->detail;?></td>
+                                <td><?php echo nl2br($ml_item->detail);?></td>
                             </tr>
                         <?php endforeach;?>
                         </tbody>

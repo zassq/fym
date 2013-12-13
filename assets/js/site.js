@@ -35,6 +35,8 @@ $(function(){
             "oLanguage": {
                 "sUrl": site_url+"assets/dataTable-zh.txt"
             },
+            "bFilter" : true,
+            "bAutoWidth": false,
             "aoColumnDefs": [
                 { "bSortable": false, "aTargets": [-1] }
             ]
