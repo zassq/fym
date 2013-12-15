@@ -39,7 +39,13 @@ $(function(){
             "bAutoWidth": false,
             "aoColumnDefs": [
                 { "bSortable": false, "aTargets": [-1] }
-            ]
+            ],
+            "sDom" : "<'row'W><'row'<'col-xs-5 col-sm-6'l><'col-xs-7 col-sm-6 text-right'f>r>t<'row'<'col-xs-3 col-sm-4 col-md-5'i><'col-xs-9 col-sm-8 col-md-7 text-right'p>>",
+            "oColumnFilterWidgets" : {
+                "bGroupTerms" : true,
+                "iMaxSelections" : 1,
+                "aiExclude": [ 0, 3, 6,7 ]
+            }
         });
     }
 

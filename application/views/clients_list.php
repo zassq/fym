@@ -8,7 +8,7 @@
         <table class="table table-striped table-hover table-bordered sorting_table">
             <thead>
                 <tr>
-                    <th><?php echo lang('id') ?></th>
+                 <!--   <th><?php echo lang('id') ?></th> -->
                     <th><?php echo lang('company_name') ?></th>
                     <th><?php echo lang('progress') ?></th>
                     <th><?php echo lang('status') ?></th>
@@ -23,7 +23,7 @@
             <tbody>
                 <?php foreach($clients as $client): ?>
                     <tr>
-                        <td><?php echo $client->id; ?></td>
+                     <!--   <td><?php echo $client->id; ?></td>  -->
                         <td>
                             <a href="<?php echo site_url('client/'.$client->id); ?>"><?php echo $client->name; ?></a><br/>
                             <?php if(!empty($client->address)):?><span class="small"><?php echo $client->address; ?></span><br/><?php endif;?>
@@ -34,12 +34,12 @@
                         </td>
                     <!--    <td><span class="<?php echo $client->is_hightech == "Y" ? 'text-success' : 'text-danger'; ?>"><?php echo $client->is_hightech == "Y" ? lang('yes') : lang('no'); ?></span><?php if(!empty($client->hightech_cert_id)) echo '<br/><span class="small text-muted">'.lang('cert_code').'：<strong>'.$certs[$client->hightech_cert_id]->cert_code.'</strong></span>';?></td>
                         <td><span class="<?php echo $client->is_soft_comp == "Y" ? 'text-success' : 'text-danger'; ?>"><?php echo $client->is_soft_comp == "Y" ? lang('yes') : lang('no'); ?></span><?php if(!empty($client->soft_comp_cert_id)) echo '<br/><span class="small text-muted">'.lang('cert_code').'：<strong>'.$certs[$client->soft_comp_cert_id]->cert_code.'</strong></span>';?></td>  -->
-                        <td><span class="text-warning small"><?php echo $progress[$client->progress];?><br></span></td>
-                        <td><span class="text-info small"><?php echo $status[$client->status];?></span></td>
+                        <td class="text-warning small"><?php echo $progress[$client->progress];?></td>
+                        <td class="text-info small"><?php echo $status[$client->status];?></td>
                         <td><?php echo !empty($client->level1) ? $level1[$client->level1] : lang('nope'); ?></td>
                         <td><?php echo !empty($client->area)?$client->area : lang('nope'); ?></td>
                         <td>
-                            <?php echo $client->staff; ?><br/>
+                            <?php echo $client->staff; ?>
                         </td>
                         <td class="small"><?php echo !empty($client->note)? nl2br($client->note) : lang('nope'); ?></td>
                         <td><?php

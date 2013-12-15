@@ -94,13 +94,14 @@
             <h2><?php echo lang('marketing_log');?></h2>
             <?php if($ml_items && count($ml_items) > 0): ?>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered sorting_table">
+                    <table class="table table-striped table-hover table-bordered">
                         <thead>
                         <tr>
                             <td>#</td>
                             <td><?php echo lang('date');?></td>
                             <td><?php echo lang('sales_rep');?></td>
                             <td><?php echo lang('marketing_log');?></td>
+                            <td><?php echo lang('action');?></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -110,6 +111,7 @@
                                 <td><?php echo date(lang('date_format'), strtotime($ml_item->date));?></td>
                                 <td><?php echo $ml_item->staff;?></td>
                                 <td><?php echo nl2br($ml_item->detail);?></td>
+                                <td><?php #echo $ml_item->sid;?></td>
                             </tr>
                         <?php endforeach;?>
                         </tbody>

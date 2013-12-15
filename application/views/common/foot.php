@@ -40,8 +40,9 @@
     foreach($load_extra as $le){
         switch($le){
             case 'dataTables': ?>
-                <script src="<?php echo site_url(); ?>assets/js/jquery.dataTables.min.js"></script>
-                <script src="<?php echo site_url(); ?>assets/js/bootstrap-dataTables.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/datatables/jquery.dataTables.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/datatables/bootstrap-dataTables.min.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/datatables/ColumnFilterWidgets.min.js"></script>
             <?php break;
             case 'datatimepicker': ?>
                 <script src="<?php echo site_url(); ?>assets/js/moment.min.js"></script>

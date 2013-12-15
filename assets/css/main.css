@@ -254,4 +254,15 @@ em{
 .displayTable{
     display: none;
 }
-
+.column-filter-widget{
+    margin: 0 0 15px;
+}
+.column-filter-widget-selected-terms{
+    margin: 0 0 20px;
+}
+.column-filter-widget-selected-terms a{
+    margin: 0 15px 0 0;
+}
+.column-filter-widget-selected-terms a:hover{
+    text-decoration: line-through;
+}
