@@ -18,9 +18,10 @@ class Clients_controller extends CI_Controller {
             $this->output->enable_profiler(TRUE);
         }
         $this->load->library(array('fymauth', 'msg'));
-        $this->load->model(array('progress', 'status', 'clients', 'marketinglog', 'staff', 'staff_log', 'hightech_level', 'certs'));
+        $this->load->model(array('progress', 'status', 'clients', 'marketinglog', 'staff', 'staff_log', 'hightech_level', 'certs', 'category'));
         $progress = new Progress();
         $status = new Status();
+        $cat = new Category();
 
         if(!$this->fymauth->logged_in()) redirect('users/login');
 
@@ -33,6 +34,7 @@ class Clients_controller extends CI_Controller {
             'usertype' => $this->config->item('usertype'),
             'progress' => $progress->get_value_pair('progress'),
             'status' => $status->get_value_pair('status'),
+            'cats' => $cat->get_value_pair('cat_name'),
             'error' => ''
         );
 

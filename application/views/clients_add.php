@@ -46,12 +46,18 @@
                 <div class="form-group">
                     <?php echo form_label(lang('note').'：', 'note', array('class' => 'col-sm-3 control-label')); ?>
                     <div class="col-sm-9">
-                        <?php echo form_textarea(array('class' => 'form-control','id' => 'note', 'placeholder' => lang('note'), 'name' => 'note', 'rows' => 5)); ?>
+                        <?php echo form_textarea(array('class' => 'form-control','id' => 'note', 'placeholder' => lang('note'), 'name' => 'note', 'rows' => 8)); ?>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <h2><?php echo lang('sale_info'); ?></h2>
+                <div class="form-group">
+                    <?php echo form_label(lang('category').'：', 'cat', array('class' => 'col-sm-3 control-label')); ?>
+                    <div class="col-sm-9">
+                        <?php echo form_dropdown('cat_id', $cats, '0', 'class="form-control" id="cat"'); ?>
+                    </div>
+                </div>
                 <div class="form-group">
                     <?php echo form_label(lang('sales_rep').'：', 'staff_id', array('class' => 'col-sm-3 control-label')); ?>
                     <div class="col-sm-9">
@@ -102,8 +108,11 @@
                 </div>
                 <div class="form-group" id="high_tech_cert_info">
                     <?php echo form_label(lang('high_tech_cert_code').'：', 'htcc', array('class' => 'col-sm-3 control-label')); ?>
-                    <div class="col-sm-9">
+                    <div class="col-sm-5">
                         <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'htcc', 'placeholder' => lang('high_tech_cert_code'), 'name' => 'high_tech_cert_code')); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?php echo form_dropdown('hightech_year', array_merge(array('0' => lang('grant_year')), range(2000, date("Y", strtotime("+2 years")))), '0', 'class="form-control"'); ?>
                     </div>
                 </div>
                 <div class="form-group">

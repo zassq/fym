@@ -117,5 +117,6 @@ $lang['staff'] = '员工权限';
 $lang['A'] = '管理员';
 $lang['S'] = '员工';
 
-
+$lang['grant_year'] = '获得年份';
+$lang['category'] = '项目类别';
 ?>
