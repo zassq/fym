@@ -6,49 +6,51 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
-            <p class="clearfix">
-                <div class="col-md-4"><strong><?php echo lang('company_details') ?></strong></div>
-                <div class="col-md-8">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <p class="col-md-4"><strong><?php echo lang('company_details') ?></strong></p>
+                <p class="col-md-8">
                     <?php if(!empty($client->address)) echo $client->address."<br />"; ?>
                     <?php if(!empty($client->contact)):?><span class="small"><?php echo lang('contact') ?></span>：<?php echo $client->contact; ?><br/><?php endif;?>
                     <?php if(!empty($client->phone1)) echo $client->phone1."<br />"; ?>
                     <?php if(!empty($client->phone2)) echo $client->phone2."<br />"; ?>
                     <?php if(!empty($client->phone3)) echo $client->phone3."<br />"; ?>
-                    <?php if(!empty($client->note)) echo nl2br($client->note).""; ?>
-                </div>
-            </p>
+                </p>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12 small"><?php if(!empty($client->note)) echo nl2br($client->note).""; ?></div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('sales_rep') ?></strong></span>
-                <span class="col-md-8"><?php echo $client->staff; ?></span>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('sales_rep') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php echo $client->staff; ?></span>
             </p>
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('level1') ?></strong></span>
-                <span class="col-md-8"><?php if($client->level1) echo $level1[$client->level1]; else echo lang('nope'); ?></span>
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('level1') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php if($client->level1) echo $level1[$client->level1]; else echo lang('nope'); ?></span>
             </p>
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('progress') ?></strong></span>
-                <span class="col-md-8"><?php echo $progress[$client->progress]; ?></span>
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('progress') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php echo $progress[$client->progress]; ?></span>
             </p>
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('status') ?></strong></span>
-                <span class="col-md-8"><?php echo $status[$client->status]; ?></span>
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('status') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php echo $status[$client->status]; ?></span>
             </p>
             <?php if(!empty($client->area)): ?>
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('area') ?></strong></span>
-                <span class="col-md-8"><?php echo $client->area; ?></span>
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('area') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php echo $client->area; ?></span>
             </p>
             <?php endif; ?>
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('hightech') ?></strong></span>
-                <span class="col-md-8"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('high_tech_cert_code').'</span>：'.$certs['H']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('hightech') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('high_tech_cert_code').'</span>：'.$certs['H']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
             </p>
-            <p class="clearfix">
-                <span class="col-md-4"><strong><?php echo lang('software_company') ?></strong></span>
-                <span class="col-md-8"><?php if($client->is_soft_comp == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['S'])) echo ' | <span class="small">'.lang('soft_comp_cert_code').'</span>：'.$certs['S']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
+            <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('software_company') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php if($client->is_soft_comp == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['S'])) echo ' | <span class="small">'.lang('soft_comp_cert_code').'</span>：'.$certs['S']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
             </p>
         </div>
     </div>
@@ -111,7 +113,7 @@
                                 <td><?php echo date(lang('date_format'), strtotime($ml_item->date));?></td>
                                 <td><?php echo $ml_item->staff;?></td>
                                 <td><?php echo nl2br($ml_item->detail);?></td>
-                                <td><?php #echo $ml_item->sid;?></td>
+                                <td><?php if($userinfo->id ==  $ml_item->sid):;?><a class="btn btn-primary btn-sm" href="<?php echo site_url('ml_edit/'.$ml_item->id); ?>"><?php echo lang('edit'); ?></a> <a class="btn btn-danger btn-sm" href="<?php echo site_url('ml_delete/'.$ml_item->id); ?>" onclick="javascript: if(!confirm('<?php echo lang('confirm_delete'); ?>')) return false;"><?php echo lang('delete'); ?></a><?php endif; ?></td>
                             </tr>
                         <?php endforeach;?>
                         </tbody>

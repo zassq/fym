@@ -19,7 +19,9 @@
             "upload_error" : "添加错误，请联系管理员",
             "export_error" : "导出错误，请联系管理员",
             "export" : "导出",
-            "no_select" : "请至少选择一家企业导出"
+            "no_select" : "请至少选择一家企业导出",
+            "need_at_least_one_project" : "请至少选择一种项目",
+            "need_project_year" : "请选择项目年份"
         }
     }
 }

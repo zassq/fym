@@ -1,3 +1,5 @@
+var lang = lang || new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json', afterInit: function(){on_unload = this.show('before_unload');}});
+
 $(function(){
     'use strict';
     if($('#site_message').length > 0){
@@ -31,7 +33,7 @@ $(function(){
     }
     if($('.sorting_table').length > 0){
         $('.sorting_table').dataTable({
-            "iDisplayLength" : 5,
+            "iDisplayLength" : 10,
             "oLanguage": {
                 "sUrl": site_url+"assets/dataTable-zh.txt"
             },
@@ -53,6 +55,19 @@ $(function(){
         initDatePicker($('.marketing_log_date'));
     }
 
+    if($('select#pp').length > 0){
+        var pp = $('select#pp'),
+            origin_val;
+        pp.focus(function(){
+            origin_val = this.value;
+        }).change(function(){
+                var origin_p = $('#project_'+origin_val),
+                    new_p = $('#project_'+this.value);
+                origin_p.prop('checked', false);
+                new_p.prop('checked', true);
+                origin_val = this.value;
+            });
+    }
 
 });
 
@@ -68,7 +83,7 @@ function add_new_ml(){
     'use strict';
     var current_row = $('.marketing_log_row').length + 1;
     var tpl = $('.marketing_log_row').first().html().replace(/_1/g, '_'+current_row);
-    $('#marketing_logs').append($('<div class="form-group marketing_log_row" id="ml_row_'+current_row+'">').append(tpl));
+    $('#marketing_logs').append($('<div class="marketing_log_row" id="ml_row_'+current_row+'">').append(tpl));
     initDatePicker($('#ml_date_'+current_row).parent('.marketing_log_date'));
     if($('#ls_sales_rep_'+current_row).length > 0) $('#ml_staff_name_'+current_row).val($('#ls_sales_rep_'+current_row).find('option:selected').text());
 }
@@ -82,4 +97,28 @@ function delet_ml_row(id){
     }else{
         $('#'+id).remove();
     }
+}
+
+function form_check(t){
+    'use strict';
+    switch(t){
+        case 'client_add':
+            if(0 < $('.project_type_check:checked')){
+                alert(lang.show('need_at_least_one_project'));
+                return false;
+            }
+            for(var i = 0, l = $('.project_type_check:checked').length; i < l; i++){
+                var pid = $('.project_type_check:checked')[i].id.slice(-1),
+                      py = $('#project_year_'+pid)[0];
+                if(0 == py.value){
+                    $('html, body').animate({
+                        scrollTop: $("#proj_type_row").offset().top-50
+                    }, 2000);
+                    alert(lang.show('need_project_year'));
+                    return false;
+                }
+            }
+        break;
+    }
+    return true;
 }

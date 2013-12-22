@@ -118,5 +118,16 @@ $lang['A'] = '管理员';
 $lang['S'] = '员工';
 
 $lang['grant_year'] = '获得年份';
-$lang['category'] = '项目类别';
+$lang['project_year'] = '项目年份';
+$lang['project_type'] = '项目类别';
+$lang['primary_project'] = '主要项目';
+
+$lang['marketing_log_edit'] =  '修改跟进记录';
+$lang['marketing_log_delete'] =  '删除跟进记录';
+$lang['marketing_log_edit_log'] =  '客户：%s';
+$lang['marketing_log_delete_log'] =  '客户：%s';
+$lang['save'] =  '保存';
+$lang['successful_edit_marketing_log'] =  '成功修改跟进记录';
+$lang['successful_delete_marketing_log'] =  '成功删除跟进记录';
+$lang['project_year_error'] =  '错误设置项目年份，请更改后重新提交。';
 ?>

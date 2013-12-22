@@ -12,6 +12,9 @@ body {
     min-height: 100%;
     height: auto;
 }
+input, button, select, textarea{
+    vertical-align: bottom;
+}
 
 body{font-family:"ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif}
 h1,.h1,h2,.h2,h3,.h3,h4,.h4,.lead{font-family:"ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei UI","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif}
@@ -265,4 +268,57 @@ em{
 }
 .column-filter-widget-selected-terms a:hover{
     text-decoration: line-through;
+}
+.input-group-addon label{
+    margin-bottom: 0;
+}
+.marketing_log_row{
+    position: relative;
+}
+
+
+
+
+
+
+
+
+
+
+/**
+ * 0 - 767px
+ */
+@media (max-width: 767px) {
+    .ml_delete{
+        padding: 0;
+        position: absolute;
+        right: 15px;
+        top: 5px;
+    }
+}
+
+/**
+ * 768 - 991px
+ */
+@media (min-width: 768px) and (max-width: 991px) {
+    .ml_delete{
+        padding: 0;
+        position: absolute;
+        left: 15px;
+        top: 15px;
+    }
+}
+
+/**
+ * 992 - 1199px
+ */
+@media (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+/**
+ * 1200px+
+ */
+@media (min-width: 1200px) {
+
 }

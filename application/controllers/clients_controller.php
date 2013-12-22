@@ -18,12 +18,17 @@ class Clients_controller extends CI_Controller {
             $this->output->enable_profiler(TRUE);
         }
         $this->load->library(array('fymauth', 'msg'));
-        $this->load->model(array('progress', 'status', 'clients', 'marketinglog', 'staff', 'staff_log', 'hightech_level', 'certs', 'category'));
+        $this->load->model(array('progress', 'status', 'clients', 'marketinglog', 'staff', 'staff_log', 'hightech_level', 'certs', 'projects', 'project_client'));
         $progress = new Progress();
         $status = new Status();
-        $cat = new Category();
+        $proj = new Projects();
 
         if(!$this->fymauth->logged_in()) redirect('users/login');
+
+        $year_range = array();
+        foreach(range(2000, date('Y', strtotime('+5 years'))) as $y){
+            $year_range[$y] = $y;
+        }
 
         $this->userinfo = $this->session->userdata('user');
         $this->data = array(
@@ -34,8 +39,9 @@ class Clients_controller extends CI_Controller {
             'usertype' => $this->config->item('usertype'),
             'progress' => $progress->get_value_pair('progress'),
             'status' => $status->get_value_pair('status'),
-            'cats' => $cat->get_value_pair('cat_name'),
-            'error' => ''
+            'projects' => $proj->get_value_pair('proj_name'),
+            'error' => '',
+            'year_range' => $year_range
         );
 
         $site_message = $this->msg->getMsg();
@@ -52,6 +58,16 @@ class Clients_controller extends CI_Controller {
     public function add(){
         # post first
         if($this->input->post('save_client')){
+            # validate project year first
+            $project_info['project'] = $this->input->post('project');
+            $project_info['project_year'] = $this->input->post('project_year');
+            foreach($project_info['project'] as $p_k => $p_v){
+                if($project_info['project_year'][$p_k] == 0){
+                    $this->msg->setMsg('E', $this->lang->line('project_year_error'));
+                    redirect('client/add');
+                }
+            }
+
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('<div class="error">&gt;&gt; ', '</div>');
 
@@ -59,17 +75,10 @@ class Clients_controller extends CI_Controller {
 
             if($this->form_validation->run()){
                 $new_client = new Clients();
-                $new_client->populate($this->input->post());
-                unset($new_client->high_tech_cert_code);
-                unset($new_client->soft_comp_cert_code);
-                unset($new_client->save_client);
-                unset($new_client->ml_log);
-                unset($new_client->ml_staff_id);
-                unset($new_client->ml_staff_name);
-                unset($new_client->ml_date);
-                unset($new_client->marketing_log);
+                $new_client->populate($this->input->post('client_info'));
+
                 # high tect cert
-                if($this->input->post('is_hightech') == 'Y' && $this->input->post('high_tech_cert_code') != ''){
+                if($this->input->post('client_info[is_hightech]') == 'Y' && $this->input->post('high_tech_cert_code') != ''){
                     $hightechcert = new Certs();
                     $hightechcert->cert_type = 'H';
                     $hightechcert->cert_code = $this->input->post('high_tech_cert_code');
@@ -77,7 +86,7 @@ class Clients_controller extends CI_Controller {
                     $new_client->hightech_cert_id = $hightechcert->cert_id;
                 }
                 # soft comp cert
-                if($this->input->post('is_soft_comp') == 'Y' && $this->input->post('soft_comp_cert_code') != ''){
+                if($this->input->post('client_info[is_soft_comp]') == 'Y' && $this->input->post('soft_comp_cert_code') != ''){
                     $softcompcert = new Certs();
                     $softcompcert->cert_type = 'S';
                     $softcompcert->cert_code = $this->input->post('soft_comp_cert_code');
@@ -86,6 +95,16 @@ class Clients_controller extends CI_Controller {
                 }
                 $new_client->created = date('Y-m-d H:i:s', time());
                 $new_client->save();
+                # save project info
+                foreach($project_info['project'] as $p_k => $p_v){
+                    $pc = new Project_client();
+                    $pc->client_id = $new_client->id;
+                    $pc->proj_id = $p_v;
+                    $pc->proj_year = $project_info['project_year'][$p_k];
+                    $pc->save();
+                    unset($pc);
+                }
+
                 $ml_date = $this->input->post('ml_date');
                 if(count($ml_date)> 0){
                     $ml_log = $this->input->post('ml_log');

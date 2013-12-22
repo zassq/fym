@@ -1,5 +1,5 @@
 var on_unload,
-    lang = new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json', afterInit: function(){on_unload = this.show('before_unload');}});
+    lang = lang || new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json', afterInit: function(){on_unload = this.show('before_unload');}});
 
 
 $(function(){

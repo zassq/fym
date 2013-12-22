@@ -260,6 +260,7 @@ class Users extends CI_Controller {
                 $clients[$k]->progress_detail = $all_progress[$v->progress];
                 $clients[$k]->status_detail = $all_status[$v->status];
             }
+            $clients = array_values($clients);
             echo json_encode(array('type' => 'success', 'msg' => count($clients), 'clients' => $clients));
         }
     }
@@ -273,6 +274,7 @@ class Users extends CI_Controller {
             foreach($logs as $k=>$v){
                 $logs[$k]->date = date($this->lang->line('date_format'), strtotime($v->date));
             }
+            $logs = array_values($logs);
             echo json_encode(array('type' => 'success', 'msg' => count($logs), 'histories' => $logs));
         }
     }
