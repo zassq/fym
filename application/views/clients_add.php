@@ -112,7 +112,7 @@
                         <?php echo form_input(array('type' => 'text','class' => 'form-control','id' => 'htcc', 'placeholder' => lang('high_tech_cert_code'), 'name' => 'high_tech_cert_code')); ?>
                     </div>
                     <div class="col-sm-4">
-                        <?php echo form_dropdown('hightech_year', (array('0' => lang('grant_year')) + $year_range), '0', 'class="form-control"'); ?>
+                        <?php echo form_dropdown('client_info[hightech_year]', (array('0' => lang('grant_year')) + $year_range), '0', 'class="form-control"'); ?>
                     </div>
                 </div>
                 <div class="form-group">

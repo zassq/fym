@@ -23,6 +23,10 @@
         </div>
         <div class="col-md-6 col-sm-6 col-xs-12">
             <p class="form-group">
+                <span class="col-md-4 col-xs-6"><strong><?php echo lang('primary_project') ?></strong></span>
+                <span class="col-md-8 col-xs-6"><?php echo $projects[$client->primary_project]; ?></span>
+            </p>
+            <p class="form-group">
                 <span class="col-md-4 col-xs-6"><strong><?php echo lang('sales_rep') ?></strong></span>
                 <span class="col-md-8 col-xs-6"><?php echo $client->staff; ?></span>
             </p>
@@ -46,11 +50,11 @@
             <?php endif; ?>
             <p class="form-group">
                 <span class="col-md-4 col-xs-6"><strong><?php echo lang('hightech') ?></strong></span>
-                <span class="col-md-8 col-xs-6"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('high_tech_cert_code').'</span>：'.$certs['H']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
+                <span class="col-md-8 col-xs-6"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('cert_code').'：'.$certs['H']->cert_code.'</span>';}else echo '<span class="text-danger">'.lang('no').'</span>'; ?><?php if(isset($client->hightech_year)): ?> | <span class="small"><?php echo $client->hightech_year.lang('year'); ?></span><?php endif;?></span>
             </p>
             <p class="form-group">
                 <span class="col-md-4 col-xs-6"><strong><?php echo lang('software_company') ?></strong></span>
-                <span class="col-md-8 col-xs-6"><?php if($client->is_soft_comp == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['S'])) echo ' | <span class="small">'.lang('soft_comp_cert_code').'</span>：'.$certs['S']->cert_code;}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
+                <span class="col-md-8 col-xs-6"><?php if($client->is_soft_comp == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['S'])) echo ' | <span class="small">'.lang('soft_comp_cert_code').'：'.$certs['S']->cert_code.'</span>';}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
             </p>
         </div>
     </div>
@@ -90,6 +94,19 @@
             <dd><?php echo $client->area; ?></dd>
         </dl>
     </div> -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2><?php echo lang('project_type'); ?></h2>
+            <?php if(empty($project_client)): ?>
+                <?php echo lang('no_project_type');?>
+            <?php else: ?>
+            <?php foreach($project_client as $p_k => $p_v): ?>
+            <p><?php echo '<strong>'.$projects[$p_v->proj_id]."：</strong>".$p_v->proj_year.lang('year');?></p>
+            <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -168,7 +185,11 @@
                         </div>
                     </div>
                 </div>
-                <?php echo form_submit('save_ml', lang('submit'), 'class="btn btn-primary btn-lg pull-right"') ?>
+                <?php echo form_submit('save_ml', lang('submit'), 'class="btn btn-primary pull-right"') ?>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
             </form>
         </div>
     </div>

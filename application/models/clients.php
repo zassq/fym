@@ -71,25 +71,34 @@ class Clients extends MY_Model{
 	public $is_hightech;
 
 	public $hightech_cert_id;
-
+    public $hightech_year;
 	public $is_soft_comp;
 
 	public $soft_comp_cert_id;
     public $staff_id;
     public $staff;
-    public $marketing_log;
     public $created;
+    public $primary_project;
 
-    public static function get_all_clients($mlClass){
+
+    public $marketing_log;
+    public $pc_info;
+
+    public static function get_all_clients($mlClass, $pcClass){
         $c = new Clients();
         $all = $c->get();
         if(!empty($all)){
             $client_ids = array_keys($all);
             $all_ml = $mlClass->get(0, 0, 'date desc');
+            $all_pc = $pcClass->get();
             foreach($all_ml as $ml){
                 if(in_array($ml->cid, $client_ids)) $all[$ml->cid]->marketing_log[] = $ml;
             }
+            foreach($all_pc as $pc){
+                if(in_array($pc->client_id, $client_ids)) $all[$pc->client_id]->pc_info[$pc->proj_id] = $pc;
+            }
         }
+        #echo '<pre>';var_dump($all);die();
         return $all;
     }
     public function findClientByName($client_name){

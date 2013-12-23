@@ -121,6 +121,9 @@ $lang['grant_year'] = '获得年份';
 $lang['project_year'] = '项目年份';
 $lang['project_type'] = '项目类别';
 $lang['primary_project'] = '主要项目';
+$lang['no_client_error'] = '无所需客户信息。';
+$lang['year'] = '年';
+$lang['no_project_type'] = '尚无项目记录';
 
 $lang['marketing_log_edit'] =  '修改跟进记录';
 $lang['marketing_log_delete'] =  '删除跟进记录';

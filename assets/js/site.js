@@ -46,7 +46,7 @@ $(function(){
             "oColumnFilterWidgets" : {
                 "bGroupTerms" : true,
                 "iMaxSelections" : 1,
-                "aiExclude": [ 0, 3, 6,7 ]
+                "aiExclude": [ 0, 8,9 ]
             }
         });
     }
@@ -103,7 +103,8 @@ function form_check(t){
     'use strict';
     switch(t){
         case 'client_add':
-            if(0 < $('.project_type_check:checked')){
+        case 'client_update':
+            if(1 > $('.project_type_check:checked').length){
                 alert(lang.show('need_at_least_one_project'));
                 return false;
             }

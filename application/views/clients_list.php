@@ -12,6 +12,8 @@
                     <th><?php echo lang('company_name') ?></th>
                     <th><?php echo lang('progress') ?></th>
                     <th><?php echo lang('status') ?></th>
+                    <th><?php echo lang('project_type') ?></th>
+                    <th><?php echo lang('project_year') ?></th>
                     <th><?php echo lang('level1') ?></th>
                     <th><?php echo lang('area'); ?></th>
                     <th><?php echo lang('sales_rep'); ?></th>
@@ -36,6 +38,8 @@
                         <td><span class="<?php echo $client->is_soft_comp == "Y" ? 'text-success' : 'text-danger'; ?>"><?php echo $client->is_soft_comp == "Y" ? lang('yes') : lang('no'); ?></span><?php if(!empty($client->soft_comp_cert_id)) echo '<br/><span class="small text-muted">'.lang('cert_code').'：<strong>'.$certs[$client->soft_comp_cert_id]->cert_code.'</strong></span>';?></td>  -->
                         <td class="text-warning small"><?php echo $progress[$client->progress];?></td>
                         <td class="text-info small"><?php echo $status[$client->status];?></td>
+                        <td class="text-warning small"><?php echo $projects[$client->primary_project];?></td>
+                        <td class="text-info small"><?php if(isset($client->pc_info[$client->primary_project]->proj_year)) echo $client->pc_info[$client->primary_project]->proj_year.lang('year');?></td>
                         <td><?php echo !empty($client->level1) ? $level1[$client->level1] : lang('nope'); ?></td>
                         <td><?php echo !empty($client->area)?$client->area : lang('nope'); ?></td>
                         <td>

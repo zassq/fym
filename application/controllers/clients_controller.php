@@ -8,7 +8,7 @@ class Clients_controller extends CI_Controller {
         parent::__construct();
 
         #echo '<pre>';var_dump(Progress::get());die();
-        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT && false){
+        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT && true){
             $sections = array(
                 'benchmarks' => TRUE, 'memory_usage' => TRUE,
                 'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => FALSE, 'queries' => TRUE,
@@ -71,14 +71,16 @@ class Clients_controller extends CI_Controller {
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('<div class="error">&gt;&gt; ', '</div>');
 
-            $this->form_validation->set_rules('name', 'lang:company_name', 'required');
+            $this->form_validation->set_rules('client_info[name]', 'lang:company_name', 'required');
 
             if($this->form_validation->run()){
+                $client_info = $this->input->post('client_info');
                 $new_client = new Clients();
-                $new_client->populate($this->input->post('client_info'));
-
+                $new_client->populate($client_info);
+                unset($new_client->marketing_log);
+                unset($new_client->pc_info);
                 # high tect cert
-                if($this->input->post('client_info[is_hightech]') == 'Y' && $this->input->post('high_tech_cert_code') != ''){
+                if($client_info['is_hightech'] == 'Y' && $this->input->post('high_tech_cert_code') != ''){
                     $hightechcert = new Certs();
                     $hightechcert->cert_type = 'H';
                     $hightechcert->cert_code = $this->input->post('high_tech_cert_code');
@@ -86,7 +88,7 @@ class Clients_controller extends CI_Controller {
                     $new_client->hightech_cert_id = $hightechcert->cert_id;
                 }
                 # soft comp cert
-                if($this->input->post('client_info[is_soft_comp]') == 'Y' && $this->input->post('soft_comp_cert_code') != ''){
+                if($client_info['is_soft_comp'] == 'Y' && $this->input->post('soft_comp_cert_code') != ''){
                     $softcompcert = new Certs();
                     $softcompcert->cert_type = 'S';
                     $softcompcert->cert_code = $this->input->post('soft_comp_cert_code');
@@ -99,7 +101,7 @@ class Clients_controller extends CI_Controller {
                 foreach($project_info['project'] as $p_k => $p_v){
                     $pc = new Project_client();
                     $pc->client_id = $new_client->id;
-                    $pc->proj_id = $p_v;
+                    $pc->proj_id = $p_k;
                     $pc->proj_year = $project_info['project_year'][$p_k];
                     $pc->save();
                     unset($pc);
@@ -147,10 +149,11 @@ class Clients_controller extends CI_Controller {
 
     public function listing(){
         $ml = new Marketinglog();
+        $pc = new Project_client();
 
-        $this->data['clients'] = Clients::get_all_clients($ml);
+        $this->data['clients'] = Clients::get_all_clients($ml, $pc);
         $this->data['level1'] = Hightech_level::get_level1();
-        $this->data['certs'] = $this->certs->get();
+        //$this->data['certs'] = $this->certs->get();
 
         $this->data['here'] = 'clients';
         $this->data['load_extra'] = array('dataTables');
@@ -162,7 +165,13 @@ class Clients_controller extends CI_Controller {
     public function view($cid){
         $client = new Clients();
         $ml = new Marketinglog();
+        $pc = new Project_client();
         $client->load($cid);
+        # no client info
+        if(NULL == $client->id){
+            $this->msg->setMsg('E', $this->lang->line('no_client_error'));
+            redirect('users/dash');
+        }
         $ml_items = $ml->load_by_cid($cid);
         $this->data['certs'] = array();
         if(isset($client->hightech_cert_id)) $this->data['certs'] = array_merge($this->data['certs'], Certs::get_certs_by_id($client->hightech_cert_id));
@@ -172,6 +181,7 @@ class Clients_controller extends CI_Controller {
         $this->data['ml_items'] = $ml_items;
         $this->data['level1'] = Hightech_level::get_level1();
         $this->data['staff'] = Staff::get_staff($this->userinfo->usertype == 'A' ? true: false);
+        $this->data['project_client'] = $pc->get_by_conditions(array('client_id' => $cid));
 
         $this->data['here'] = 'clients';
         $this->data['load_extra'] = array('dataTables','datatimepicker');
@@ -294,6 +304,7 @@ class Clients_controller extends CI_Controller {
 
     public function client_update($cid){
         $old_client = new Clients();
+        $pc = new Project_client();
         $old_client->load($cid);
         $this->data['client'] = $old_client;
         $this->data['certs'] = array();
@@ -301,25 +312,30 @@ class Clients_controller extends CI_Controller {
         if(isset($old_client->soft_comp_cert_id)) $this->data['certs'] = array_merge($this->data['certs'], Certs::get_certs_by_id($old_client->soft_comp_cert_id));
 
         if($this->input->post('save_client')){
+            # validate project year first
+            $project_info['project'] = $this->input->post('project');
+            $project_info['project_year'] = $this->input->post('project_year');
+            $project_info['pc_id'] = $this->input->post('pc_id');
+            foreach($project_info['project'] as $p_k => $p_v){
+                if($project_info['project_year'][$p_k] == 0){
+                    $this->msg->setMsg('E', $this->lang->line('project_year_error'));
+                    redirect('client/update/'.$cid);
+                }
+            }
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('<div class="error">&gt;&gt; ', '</div>');
 
-            $this->form_validation->set_rules('name', 'lang:company_name', 'required');
+            $this->form_validation->set_rules('client_info[name]', 'lang:company_name', 'required');
             $new_client = new Clients();
             $new_client->id = $cid;
 
             if($this->form_validation->run()){
-                $new_client->populate($this->input->post());
-                unset($new_client->high_tech_cert_code);
-                unset($new_client->soft_comp_cert_code);
-                unset($new_client->save_client);
-                unset($new_client->ml_log);
-                unset($new_client->ml_staff_id);
-                unset($new_client->ml_staff_name);
-                unset($new_client->ml_date);
+                $client_info = $this->input->post('client_info');
+                $new_client->populate($client_info);
                 unset($new_client->marketing_log);
+                unset($new_client->pc_info);
                 # high tect cert
-                if($this->input->post('is_hightech') == 'Y' && $this->input->post('high_tech_cert_code') != ''){
+                if($client_info['is_hightech'] == 'Y' && $this->input->post('high_tech_cert_code') != ''){
                     $hightechcert = new Certs();
                     $hightechcert->cert_id = $old_client->hightech_cert_id;
                     $hightechcert->cert_type = 'H';
@@ -332,7 +348,7 @@ class Clients_controller extends CI_Controller {
                     $hightechcert->delete();
                 }
                 # soft comp cert
-                if($this->input->post('is_soft_comp') == 'Y' && $this->input->post('soft_comp_cert_code') != ''){
+                if($client_info['is_soft_comp'] == 'Y' && $this->input->post('soft_comp_cert_code') != ''){
                     $softcompcert = new Certs();
                     $softcompcert->cert_id = $old_client->soft_comp_cert_id;
                     $softcompcert->cert_type = 'S';
@@ -345,6 +361,16 @@ class Clients_controller extends CI_Controller {
                     $softcompcert->delete();
                 }
                 $new_client->save();
+                # save project info
+                foreach($project_info['project'] as $p_k => $p_v){
+                    $pc = new Project_client();
+                    if(0 != $project_info['pc_id'][$p_k]) $pc->id = $project_info['pc_id'][$p_k];
+                    $pc->client_id = $new_client->id;
+                    $pc->proj_id = $p_k;
+                    $pc->proj_year = $project_info['project_year'][$p_k];
+                    $pc->save();
+                    unset($pc);
+                }
 
                 $slog = new Staff_log();
                 $slog->date = date('Y-m-d H:i:s', time());
@@ -362,6 +388,10 @@ class Clients_controller extends CI_Controller {
         $this->data['marketing_log'] = Marketinglog::getAllLog();
         $this->data['staff'] = Staff::get_staff();
         $this->data['level1'] = Hightech_level::get_level1();
+        $pcs = $pc->get_by_conditions(array('client_id' => $cid));
+        foreach($pcs as $_pc){
+            $this->data['project_client'][$_pc->proj_id] = $_pc;
+        }
 
         $this->data['here'] = 'clients';
         $this->data['load_extra'] = array('datatimepicker');
@@ -393,6 +423,7 @@ class Clients_controller extends CI_Controller {
                 $client->status = 1;
                 $client->note = sprintf($this->lang->line('load_from_import'), $this->userinfo->name, date($this->lang->line('date_format'), time()));
                 unset($client->marketing_log);
+                unset($client->pc_info);
                 $client->save();
                 $return->client_id = $client->id;
                 $return->is_high_tech = $client->is_hightech;

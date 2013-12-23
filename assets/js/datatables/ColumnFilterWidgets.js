@@ -109,7 +109,7 @@
 
 		// Add a widget for each visible and filtered column
 		$.each( oDataTableSettings.aoColumns, function ( i, oColumn ) {
-			var $WidgetElem = $( '<div class="column-filter-widget col-xs-6 col-sm-6 col-md-3"></div>' );
+			var $WidgetElem = $( '<div class="column-filter-widget col-xs-6 col-sm-6 col-md-2"></div>' );
 			if ( sExcludeList.indexOf( '|' + i + '|' ) < 0 ) {
 				me.aoWidgets.push( new ColumnFilterWidget( $WidgetElem, oDataTableSettings, i, me ) );
 				me.$MenuContainer.append( $WidgetElem );
