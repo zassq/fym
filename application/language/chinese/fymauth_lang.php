@@ -133,4 +133,5 @@ $lang['save'] =  '保存';
 $lang['successful_edit_marketing_log'] =  '成功修改跟进记录';
 $lang['successful_delete_marketing_log'] =  '成功删除跟进记录';
 $lang['project_year_error'] =  '错误设置项目年份，请更改后重新提交。';
+$lang['please_set'] =  '请设置';
 ?>

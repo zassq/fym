@@ -3,9 +3,9 @@
     <p><a href="<?php echo site_url('clients/add'); ?>" class="btn btn-primary"><?php echo lang('add_client') ?></a></p>
 
 
-    <?php if(!empty($clients)):?>
+    <?php# if(!empty($clients)):?>
     <div class="table-responsive">
-        <table class="table table-striped table-hover table-bordered sorting_table">
+        <table class="table table-striped table-hover table-bordered sorting_table_1" id="client_list_table">
             <thead>
                 <tr>
                  <!--   <th><?php echo lang('id') ?></th> -->
@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($clients as $client): ?>
+                <?php /*foreach($clients as $client): ?>
                     <tr>
                      <!--   <td><?php echo $client->id; ?></td>  -->
                         <td>
@@ -39,7 +39,7 @@
                         <td class="text-warning small"><?php echo $progress[$client->progress];?></td>
                         <td class="text-info small"><?php echo $status[$client->status];?></td>
                         <td class="text-warning small"><?php echo $projects[$client->primary_project];?></td>
-                        <td class="text-info small"><?php if(isset($client->pc_info[$client->primary_project]->proj_year)) echo $client->pc_info[$client->primary_project]->proj_year.lang('year');?></td>
+                        <td class="text-info small"><?php if(isset($client->pc_info[$client->primary_project]->proj_year)) echo $client->pc_info[$client->primary_project]->proj_year.lang('year'); else echo '<a href="'.site_url('client_update/'.$client->id).'" class="underline">'.lang('please_set').'</a>'?></td>
                         <td><?php echo !empty($client->level1) ? $level1[$client->level1] : lang('nope'); ?></td>
                         <td><?php echo !empty($client->area)?$client->area : lang('nope'); ?></td>
                         <td>
@@ -57,11 +57,11 @@
                             ?></td>
                         <!--         <td><a href="<?php echo site_url('client/'.$client->id) ?>" class="btn btn-sm btn-default"><?php echo lang('view') ?></a> <a href="<?php echo site_url('client_delete/'.$client->id) ?>" class="btn btn-sm btn-danger" onclick="javascript: if(!confirm('<?php echo lang('confirm_delete'); ?>')) return false;"><?php echo lang('delete') ?></a></td> -->
                     </tr>
-                <?php endforeach; ?>
+                <?php endforeach; */?>
             </tbody>
         </table>
     </div>
-    <?php else: ?>
+    <?php /*else: ?>
     <h2><?php echo lang('no_clients'); ?></h2>
-    <?php endif; ?>
+    <?php endif;*/ ?>
 </div>

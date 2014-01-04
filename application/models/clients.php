@@ -79,6 +79,7 @@ class Clients extends MY_Model{
     public $staff;
     public $created;
     public $primary_project;
+    public $primary_project_year;
 
 
     public $marketing_log;
@@ -136,6 +137,227 @@ class Clients extends MY_Model{
             }
         }
         return $return;
+    }
+
+    public static function ajax_list_detail($paras, $mlClass, $pcClass){
+        $c = new Clients();
+        $db = $c->db;
+        $aColumns = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
+
+        $return = array();
+        $db->select($c::DB_TABLE.'.*');
+        if ( isset( $paras['iDisplayStart'] ) && $paras['iDisplayLength'] != '-1' ){
+            $db->limit(intval($paras['iDisplayLength']), intval($paras['iDisplayStart']));
+        }
+
+        if ( isset($paras['iSortCol_0'])){
+            for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
+                if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
+                    $db->order_by($aColumns[ intval( $paras['iSortCol_'.$i] ) ], ($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc'));
+                }
+            }
+        }
+
+        if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
+            for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+                $db->or_like($aColumns[$i], $paras['sSearch']);
+            }
+        }
+
+        $db->from($c::DB_TABLE);
+
+        /* Individual column filtering */
+        for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+            if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
+                switch($aColumns[$i]){
+                    case 'progress':
+                        #$db->from('progress')->where(array('progress.progress' => $paras['sSearch_'.$i], 'progress.id' => $db->dbprefix($c::DB_TABLE).'.progress'), null, false);
+                        $db->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress'.' AND '.$db->dbprefix('progress').'.progress = "'.$paras['sSearch_'.$i].'"');
+                    break;
+                    case 'status':
+                        $db->join('status', 'status.id = '.$c::DB_TABLE.'.status'.' AND '.$db->dbprefix('status').'.status = "'.$paras['sSearch_'.$i].'"');
+                    break;
+                    case 'primary_project':
+                        $db->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project'.' AND '.$db->dbprefix('projects').'.proj_name = "'.$paras['sSearch_'.$i].'"');
+                    break;
+                    case 'level1':
+                        $db->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1'.' AND '.$db->dbprefix('hightech_level').'.hightech_name = "'.$paras['sSearch_'.$i].'"');
+                    break;
+                    case 'area':
+                        $db->where($aColumns[$i], $paras['sSearch_'.$i]);
+                    break;
+                    default:
+                        $db->like($aColumns[$i], $paras['sSearch_'.$i]);
+                    break;
+                }
+            }
+        }
+
+        $query = $db->get();
+        if(!$query) return $return;
+
+        foreach ($query->result_array() as $row) {
+            $return[$row['id']] = $row;
+        }
+        $client_ids = array_keys($return);
+        $all_ml = $mlClass->get(0, 0, 'date desc');
+        //$all_pc = $pcClass->get();
+        foreach($all_ml as $ml){
+            if(in_array($ml->cid, $client_ids)) $return[$ml->cid]['marketing_log'][] = $ml;
+        }
+        /*foreach($all_pc as $pc){
+            if(in_array($pc->client_id, $client_ids)) $return[$pc->client_id]['pc_info'][$pc->proj_id] = $pc;
+        }*/
+        #echo '<pre>';var_dump($a);die();
+        return $return;
+    }
+
+    public static function ajax_list_detail_header($paras){
+        $c = new Clients();
+        $db = $c->db;
+        $aColumns = $c->config->item('clients_listing_cols');
+
+        $return = array();
+
+        $db->start_cache();
+        /*if ( isset( $paras['iDisplayStart'] ) && $paras['iDisplayLength'] != '-1' ){
+            $db->limit(intval($paras['iDisplayLength']), intval($paras['iDisplayStart']));
+        }*/
+
+        if ( isset($paras['iSortCol_0'])){
+            for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
+                if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
+                    $db->order_by($aColumns[ intval( $paras['iSortCol_'.$i] ) ], ($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc'));
+                }
+            }
+        }
+
+        if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
+            for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+                $db->or_like($aColumns[$i], $paras['sSearch']);
+            }
+        }
+
+        /* Individual column filtering */
+        /*for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+            if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
+                $db->like($aColumns[$i], $paras['sSearch_'.$i]);
+            }
+        }*/
+        $db->from($c::DB_TABLE);
+
+        $db->stop_cache();
+
+        foreach($aColumns as $k=> $v){
+            if ( isset($paras['bSearchable_'.$k]) && $paras['bSearchable_'.$k] == "true" && $paras['sSearch_'.$k] != '' ){
+                switch($v){
+                    case 'progress':
+                        #$db->from('progress')->where(array('progress.progress' => $paras['sSearch_'.$i], 'progress.id' => $db->dbprefix($c::DB_TABLE).'.progress'), null, false);
+                        $db->distinct()->select('progress.progress')->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress'.' AND '.$db->dbprefix('progress').'.progress = "'.$paras['sSearch_'.$k].'"');
+                        break;
+                    case 'status':
+                        $db->distinct()->select('status.status')->join('status', 'status.id = '.$c::DB_TABLE.'.status'.' AND '.$db->dbprefix('status').'.status = "'.$paras['sSearch_'.$k].'"');
+                        break;
+                    case 'primary_project':
+                        $db->distinct()->select('projects.proj_name as primary_project')->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project'.' AND '.$db->dbprefix('projects').'.proj_name = "'.$paras['sSearch_'.$k].'"');
+                        break;
+                    case 'level1':
+                        $db->distinct()->select('hightech_level.hightech_name as level1')->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1'.' AND '.$db->dbprefix('hightech_level').'.hightech_name = "'.$paras['sSearch_'.$k].'"');
+                        break;
+                    default:
+                        $db->distinct()->select($v)->like($v, $paras['sSearch_'.$k]);
+                        break;
+                }
+            }else{
+                switch($v){
+                    case 'progress':
+                        $db->distinct()->select('progress.progress')->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress');
+                        break;
+                    case 'status':
+                        $db->distinct()->select('status.status')->join('status', 'status.id = '.$c::DB_TABLE.'.status');
+                        break;
+                    case 'primary_project':
+                        $db->distinct()->select('projects.proj_name as primary_project')->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project');
+                        break;
+                    case 'level1':
+                        $db->distinct()->select('hightech_level.hightech_name as level1')->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1');
+                        break;
+                    default:
+                        $db->distinct()->select($v);
+                        break;
+                }
+            }
+
+            $query = $db->get();
+            if($query){
+                foreach($query->result_array() as $row){
+                    if(!empty($row[$v])) $return[$k][] = $row[$v];
+                }
+            }
+        }
+        #$a = $db->last_query();
+        #echo '<pre>';var_dump($a);die();
+        return $return;
+    }
+
+    public static function ajax_list_total($paras){
+        $c = new Clients();
+        $db = $c->db;
+        $aColumns = $c->config->item('clients_listing_cols');
+
+        if ( isset( $paras['iDisplayStart'] ) && $paras['iDisplayLength'] != '-1' ){
+            $db->limit(intval($paras['iDisplayLength']), intval($paras['iDisplayStart']));
+        }
+
+        if ( isset($paras['iSortCol_0'])){
+            for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
+                if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
+                    $db->order_by($aColumns[ intval( $paras['iSortCol_'.$i] ) ], ($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc'));
+                }
+            }
+        }
+
+        if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
+            for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+                $db->or_like($aColumns[$i], $paras['sSearch']);
+            }
+        }
+
+        /* Individual column filtering */
+        /*for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+            if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
+                $db->like($aColumns[$i], $paras['sSearch_'.$i]);
+            }
+        }*/
+        $db->from($c::DB_TABLE);
+
+        for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+            if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
+                switch($aColumns[$i]){
+                    case 'progress':
+                        #$db->from('progress')->where(array('progress.progress' => $paras['sSearch_'.$i], 'progress.id' => $db->dbprefix($c::DB_TABLE).'.progress'), null, false);
+                        $db->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress'.' AND '.$db->dbprefix('progress').'.progress = "'.$paras['sSearch_'.$i].'"');
+                        break;
+                    case 'status':
+                        $db->join('status', 'status.id = '.$c::DB_TABLE.'.status'.' AND '.$db->dbprefix('status').'.status = "'.$paras['sSearch_'.$i].'"');
+                        break;
+                    case 'primary_project':
+                        $db->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project'.' AND '.$db->dbprefix('projects').'.proj_name = "'.$paras['sSearch_'.$i].'"');
+                        break;
+                    case 'level1':
+                        $db->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1'.' AND '.$db->dbprefix('hightech_level').'.hightech_name = "'.$paras['sSearch_'.$i].'"');
+                        break;
+                    case 'area':
+                        $db->where($aColumns[$i], $paras['sSearch_'.$i]);
+                        break;
+                    default:
+                        $db->like($aColumns[$i], $paras['sSearch_'.$i]);
+                        break;
+                }
+            }
+        }
+
+        return $db->count_all_results();
     }
 }
 

@@ -90,13 +90,14 @@ class MY_Model extends CI_Model {
         return $ret_val;
     }
 
-    public function get_by_conditions($where= array(), $limit = 0, $offset = 0, $order_by = '') {
+    public function get_by_conditions($where= array(), $limit = 0, $offset = 0, $order_by = '', $operator = 'where') {
         if(!empty($order_by)) $this->db->order_by($order_by);
+        if(!empty($where)) $this->db->$operator($where);
         if ($limit) {
-            $query = $this->db->get_where($this::DB_TABLE, $where, $limit, $offset);
+            $query = $this->db->get($this::DB_TABLE, $limit, $offset);
         }
         else {
-            $query = $this->db->get_where($this::DB_TABLE, $where);
+            $query = $this->db->get($this::DB_TABLE);
         }
         $ret_val = array();
         if($query){
@@ -123,5 +124,12 @@ class MY_Model extends CI_Model {
                 $return[$row[$this::DB_TABLE_PK]] = $row[$value];
         }
         return $return;
+    }
+
+    public static function count_all(){
+        $cn = get_called_class();
+        $a = new $cn();
+        $db = $a->db;
+        return $db->count_all($a::DB_TABLE);
     }
 }

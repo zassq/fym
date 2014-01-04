@@ -8,7 +8,7 @@ class Clients_controller extends CI_Controller {
         parent::__construct();
 
         #echo '<pre>';var_dump(Progress::get());die();
-        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT && true){
+        if (defined('ENVIRONMENT') && 'development' == ENVIRONMENT && false){
             $sections = array(
                 'benchmarks' => TRUE, 'memory_usage' => TRUE,
                 'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => FALSE, 'queries' => TRUE,
@@ -148,11 +148,11 @@ class Clients_controller extends CI_Controller {
     }
 
     public function listing(){
-        $ml = new Marketinglog();
+        /*$ml = new Marketinglog();
         $pc = new Project_client();
 
         $this->data['clients'] = Clients::get_all_clients($ml, $pc);
-        $this->data['level1'] = Hightech_level::get_level1();
+        $this->data['level1'] = Hightech_level::get_level1();*/
         //$this->data['certs'] = $this->certs->get();
 
         $this->data['here'] = 'clients';
@@ -160,6 +160,44 @@ class Clients_controller extends CI_Controller {
         $this->load->view('common/head', $this->data);
         $this->load->view('clients_list', $this->data);
         $this->load->view('common/foot', $this->data);
+    }
+
+    public function client_list_ajax(){
+        $echo = $this->input->post('sEcho');
+        if(isset($echo)){
+            $paras = $this->input->post();
+            $ml = new Marketinglog();
+            $pc = new Project_client();
+            $level1 = Hightech_level::get_level1();
+
+            $_output_data = Clients::ajax_list_detail($paras, $ml, $pc);
+            $aaData = array();
+            foreach($_output_data as $k=>$v){
+                #echo '<pre>';var_dump($v);die();
+                $aaData[] = array(
+                    $this->load->view('client_list_items/client_list_name', $v, true),
+                    $this->data['progress'][$v['progress']],
+                    $this->data['status'][$v['status']],
+                    $this->data['projects'][$v['primary_project']],
+                    ($v['primary_project_year'] != 0) ? $v['primary_project_year'] : '',
+                    !empty($v['level1']) ? $level1[$v['level1']] : '',
+                    !empty($v['area'])?$v['area'] : '',
+                    $v['staff'],
+                    $this->load->view('client_list_items/client_list_note', $v, true),
+                    $this->load->view('client_list_items/client_list_ml', $v, true)
+                );
+            }
+            $output = array(
+                'sEcho' => $paras['sEcho'],
+                "iTotalRecords" =>Clients::count_all(),
+                "iTotalDisplayRecords" => Clients::ajax_list_total($paras) ,
+                "aaData" => $aaData,
+                'ccData' => Clients::ajax_list_detail_header($paras)
+            );
+            echo json_encode($output);
+        }else{
+            echo json_encode(array('sEcho' => false));
+        }
     }
 
     public function view($cid){
@@ -359,6 +397,10 @@ class Clients_controller extends CI_Controller {
                     $softcompcert = new Certs();
                     $softcompcert->cert_id = $old_client->soft_comp_cert_id;
                     $softcompcert->delete();
+                }
+                foreach($project_info['project'] as $p_k => $p_v){
+                    if($p_k == $new_client->primary_project)
+                        $new_client->primary_project_year = $project_info['project_year'][$p_k];
                 }
                 $new_client->save();
                 # save project info

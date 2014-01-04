@@ -123,9 +123,9 @@
 		}
 		oDataTableSettings.aoDrawCallback.push( {
 			name: 'ColumnFilterWidgets',
-			fn: function() {
+			fn: function(os) {
 				$.each( me.aoWidgets, function( i, oWidget ) {
-					oWidget.fnDraw();
+					oWidget.fnDraw(os.jqXHR.responseJSON.ccData);
 				} );
 			}
 		} );
@@ -163,6 +163,8 @@
 		widget.sSeparator = '';
 		widget.bSort = true;
 		widget.iMaxSelections = -1;
+        widget.bServerSide = oDataTableSettings.oInit.bServerSide;
+        widget.aaData = oDataTableSettings.oInit.aaData;
 		if ( 'oColumnFilterWidgets' in oDataTableSettings.oInit ) {
 			if ( 'sSeparator' in oDataTableSettings.oInit.oColumnFilterWidgets ) {
 				widget.sSeparator = oDataTableSettings.oInit.oColumnFilterWidgets.sSeparator;
@@ -224,7 +226,7 @@
 			widget.fnFilter();
 		} );
 		widget.$Container.append( widget.$Select );
-		widget.fnDraw();
+		widget.fnDraw(null);
 	};
 
 	/**
@@ -241,15 +243,31 @@
 			$.each( widget.asFilters, function( i, sFilter ) {
 				asEscapedFilters.push( fnRegExpEscape( sFilter ) );
 			} );
-			// This regular expression filters by either whole column values or an item in a comma list
-			sFilterStart = widget.sSeparator ? '(^|' + widget.sSeparator + ')(' : '^(';
-			sFilterEnd = widget.sSeparator ? ')(' + widget.sSeparator + '|$)' : ')$';
-			widget.oDataTable.fnFilter( sFilterStart + asEscapedFilters.join('|') + sFilterEnd, widget.iColumn, true, false );
+            if(widget.bServerSide){
+                widget.oDataTable.fnFilter( asEscapedFilters.join('|'), widget.iColumn, false, false );
+            }else{
+                // This regular expression filters by either whole column values or an item in a comma list
+                sFilterStart = widget.sSeparator ? '(^|' + widget.sSeparator + ')(' : '^(';
+                sFilterEnd = widget.sSeparator ? ')(' + widget.sSeparator + '|$)' : ')$';
+                widget.oDataTable.fnFilter( sFilterStart + asEscapedFilters.join('|') + sFilterEnd, widget.iColumn, true, false );
+            }
 		} else { 
 			// Clear any filters for this column
 			widget.oDataTable.fnFilter( '', widget.iColumn );
 		}
 	};
+
+    /**
+     * get column data from ajax returned json
+     *
+     * @param iColumn
+     * @param json
+     */
+    ColumnFilterWidget.prototype.fnGetAjaxColumnData = function(iColumn, json){
+        if(typeof iColumn == "undefined" || null == json || json.length < 1) return new Array();
+
+        return json[iColumn];
+    }
 
 	/**
 	* On each table draw, update filter menu items as needed. This allows any process to
@@ -257,14 +275,20 @@
 	* 
 	* @method fnDraw
 	*/
-	ColumnFilterWidget.prototype.fnDraw = function() {
+	ColumnFilterWidget.prototype.fnDraw = function(json) {
 		var widget = this;
 		var oDistinctOptions = {};
 		var aDistinctOptions = [];
 		var aData;
 		if ( widget.asFilters.length === 0 ) {
 			// Find distinct column values
-			aData = widget.oDataTable.fnGetColumnData( widget.iColumn );
+            // if no ajax response, get from current table content
+            // if has ajax response, get from ajax source
+            //console.log(json);
+			if(null == json) aData = widget.oDataTable.fnGetColumnData( widget.iColumn );
+            else{
+                aData = widget.fnGetAjaxColumnData(widget.iColumn, json);
+            }
 			$.each( aData, function( i, sValue ) {
 				var asValues = widget.sSeparator ? sValue.split( new RegExp( widget.sSeparator ) ) : [ sValue ];
 				$.each( asValues, function( j, sOption ) {

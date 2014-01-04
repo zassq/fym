@@ -275,7 +275,9 @@ em{
 .marketing_log_row{
     position: relative;
 }
-
+.underline{
+    text-decoration: underline;
+}
 
 
 

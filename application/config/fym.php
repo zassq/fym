@@ -15,4 +15,6 @@ $config['access']['staff'] ='员工权限';
 
 $config['usertype']['A'] = '管理员';
 $config['usertype']['S'] = '员工';
+
+$config['clients_listing_cols'] = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
 ?>
