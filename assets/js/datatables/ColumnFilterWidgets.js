@@ -109,7 +109,7 @@
 
 		// Add a widget for each visible and filtered column
 		$.each( oDataTableSettings.aoColumns, function ( i, oColumn ) {
-			var $WidgetElem = $( '<div class="column-filter-widget col-xs-6 col-sm-6 col-md-2"></div>' );
+			var $WidgetElem = $( '<div class="column-filter-widget col-xs-6 col-sm-6 col-md-3"></div>' );
 			if ( sExcludeList.indexOf( '|' + i + '|' ) < 0 ) {
 				me.aoWidgets.push( new ColumnFilterWidget( $WidgetElem, oDataTableSettings, i, me ) );
 				me.$MenuContainer.append( $WidgetElem );
@@ -264,7 +264,7 @@
      * @param json
      */
     ColumnFilterWidget.prototype.fnGetAjaxColumnData = function(iColumn, json){
-        if(typeof iColumn == "undefined" || null == json || json.length < 1) return new Array();
+        if(typeof iColumn == "undefined" || null == json || json.length < 1 || null == json[iColumn] || typeof json[iColumn] == 'undefined') return new Array();
 
         return json[iColumn];
     }

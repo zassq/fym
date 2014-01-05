@@ -189,7 +189,8 @@ class Clients_controller extends CI_Controller {
             }
             $output = array(
                 'sEcho' => $paras['sEcho'],
-                "iTotalRecords" =>Clients::count_all(),
+                #"iTotalRecords" =>Clients::ajax_list_total($paras),
+                "iTotalRecords" => Clients::count_all() ,
                 "iTotalDisplayRecords" => Clients::ajax_list_total($paras) ,
                 "aaData" => $aaData,
                 'ccData' => Clients::ajax_list_detail_header($paras)

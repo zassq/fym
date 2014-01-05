@@ -143,6 +143,8 @@ class Clients extends MY_Model{
         $c = new Clients();
         $db = $c->db;
         $aColumns = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
+        $aTables = $c->config->item('clients_listing_tables');
+        $aFields = $c->config->item('clients_listing_fields');
 
         $return = array();
         $db->select($c::DB_TABLE.'.*');
@@ -159,39 +161,16 @@ class Clients extends MY_Model{
         }
 
         if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
-            for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+            /*for ( $i=0 ; $i<count($aColumns) ; $i++ ){
                 $db->or_like($aColumns[$i], $paras['sSearch']);
-            }
+            }*/
+            $db = $c::_process_search_keyword($db, $paras);
         }
 
         $db->from($c::DB_TABLE);
 
         /* Individual column filtering */
-        for ( $i=0 ; $i<count($aColumns) ; $i++ ){
-            if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
-                switch($aColumns[$i]){
-                    case 'progress':
-                        #$db->from('progress')->where(array('progress.progress' => $paras['sSearch_'.$i], 'progress.id' => $db->dbprefix($c::DB_TABLE).'.progress'), null, false);
-                        $db->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress'.' AND '.$db->dbprefix('progress').'.progress = "'.$paras['sSearch_'.$i].'"');
-                    break;
-                    case 'status':
-                        $db->join('status', 'status.id = '.$c::DB_TABLE.'.status'.' AND '.$db->dbprefix('status').'.status = "'.$paras['sSearch_'.$i].'"');
-                    break;
-                    case 'primary_project':
-                        $db->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project'.' AND '.$db->dbprefix('projects').'.proj_name = "'.$paras['sSearch_'.$i].'"');
-                    break;
-                    case 'level1':
-                        $db->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1'.' AND '.$db->dbprefix('hightech_level').'.hightech_name = "'.$paras['sSearch_'.$i].'"');
-                    break;
-                    case 'area':
-                        $db->where($aColumns[$i], $paras['sSearch_'.$i]);
-                    break;
-                    default:
-                        $db->like($aColumns[$i], $paras['sSearch_'.$i]);
-                    break;
-                }
-            }
-        }
+        $db = $c::_process_column_filtering($db, $aColumns, $paras);
 
         $query = $db->get();
         if(!$query) return $return;
@@ -216,6 +195,8 @@ class Clients extends MY_Model{
         $c = new Clients();
         $db = $c->db;
         $aColumns = $c->config->item('clients_listing_cols');
+        $aTables = $c->config->item('clients_listing_tables');
+        $aFields = $c->config->item('clients_listing_fields');
 
         $return = array();
 
@@ -233,9 +214,7 @@ class Clients extends MY_Model{
         }
 
         if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
-            for ( $i=0 ; $i<count($aColumns) ; $i++ ){
-                $db->or_like($aColumns[$i], $paras['sSearch']);
-            }
+            $db = $c::_process_search_keyword($db, $paras);
         }
 
         /* Individual column filtering */
@@ -246,46 +225,27 @@ class Clients extends MY_Model{
         }*/
         $db->from($c::DB_TABLE);
 
-        $db->stop_cache();
+        $db = $c::_process_column_filtering($db, $aColumns, $paras);
 
+        $db->stop_cache();
         foreach($aColumns as $k=> $v){
-            if ( isset($paras['bSearchable_'.$k]) && $paras['bSearchable_'.$k] == "true" && $paras['sSearch_'.$k] != '' ){
-                switch($v){
-                    case 'progress':
-                        #$db->from('progress')->where(array('progress.progress' => $paras['sSearch_'.$i], 'progress.id' => $db->dbprefix($c::DB_TABLE).'.progress'), null, false);
-                        $db->distinct()->select('progress.progress')->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress'.' AND '.$db->dbprefix('progress').'.progress = "'.$paras['sSearch_'.$k].'"');
-                        break;
-                    case 'status':
-                        $db->distinct()->select('status.status')->join('status', 'status.id = '.$c::DB_TABLE.'.status'.' AND '.$db->dbprefix('status').'.status = "'.$paras['sSearch_'.$k].'"');
-                        break;
-                    case 'primary_project':
-                        $db->distinct()->select('projects.proj_name as primary_project')->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project'.' AND '.$db->dbprefix('projects').'.proj_name = "'.$paras['sSearch_'.$k].'"');
-                        break;
-                    case 'level1':
-                        $db->distinct()->select('hightech_level.hightech_name as level1')->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1'.' AND '.$db->dbprefix('hightech_level').'.hightech_name = "'.$paras['sSearch_'.$k].'"');
-                        break;
-                    default:
-                        $db->distinct()->select($v)->like($v, $paras['sSearch_'.$k]);
-                        break;
-                }
-            }else{
-                switch($v){
-                    case 'progress':
-                        $db->distinct()->select('progress.progress')->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress');
-                        break;
-                    case 'status':
-                        $db->distinct()->select('status.status')->join('status', 'status.id = '.$c::DB_TABLE.'.status');
-                        break;
-                    case 'primary_project':
-                        $db->distinct()->select('projects.proj_name as primary_project')->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project');
-                        break;
-                    case 'level1':
-                        $db->distinct()->select('hightech_level.hightech_name as level1')->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1');
-                        break;
-                    default:
-                        $db->distinct()->select($v);
-                        break;
-                }
+            switch($v){
+                case 'progress':
+                    #$db->distinct()->select('progress.progress')->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress');
+                    $db->distinct()->select('progress.progress')->from('progress')->where('progress.id = '.$db->dbprefix($c::DB_TABLE).'.progress');
+                    break;
+                case 'status':
+                    $db->distinct()->select('status.status')->from('status')->where('status.id = '.$db->dbprefix($c::DB_TABLE).'.status');
+                    break;
+                case 'primary_project':
+                    $db->distinct()->select('projects.proj_name as primary_project')->from('projects')->where('projects.proj_id = '.$db->dbprefix($c::DB_TABLE).'.primary_project');
+                    break;
+                case 'level1':
+                    $db->distinct()->select('hightech_level.hightech_name as level1')->from('hightech_level')->where('hightech_level.id = '.$db->dbprefix($c::DB_TABLE).'.level1');
+                    break;
+                default:
+                    $db->distinct()->select($v);
+                    break;
             }
 
             $query = $db->get();
@@ -295,8 +255,6 @@ class Clients extends MY_Model{
                 }
             }
         }
-        #$a = $db->last_query();
-        #echo '<pre>';var_dump($a);die();
         return $return;
     }
 
@@ -318,9 +276,10 @@ class Clients extends MY_Model{
         }
 
         if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
-            for ( $i=0 ; $i<count($aColumns) ; $i++ ){
+            /*for ( $i=0 ; $i<count($aColumns) ; $i++ ){
                 $db->or_like($aColumns[$i], $paras['sSearch']);
-            }
+            }*/
+            $db = $c::_process_search_keyword($db, $paras);
         }
 
         /* Individual column filtering */
@@ -331,21 +290,32 @@ class Clients extends MY_Model{
         }*/
         $db->from($c::DB_TABLE);
 
+        $db = $c::_process_column_filtering($db, $aColumns, $paras);
+
+        #$return = $db->count_all_results();
+        $return = count($db->get()->result_array());
+
+        #$a = $db->last_query();
+        #echo '<pre>';var_dump($return);die();
+        return $return;
+    }
+
+    private static function _process_column_filtering($db, $aColumns, $paras){
+        $c = new Clients();
         for ( $i=0 ; $i<count($aColumns) ; $i++ ){
             if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
                 switch($aColumns[$i]){
                     case 'progress':
-                        #$db->from('progress')->where(array('progress.progress' => $paras['sSearch_'.$i], 'progress.id' => $db->dbprefix($c::DB_TABLE).'.progress'), null, false);
-                        $db->join('progress', 'progress.id = '.$c::DB_TABLE.'.progress'.' AND '.$db->dbprefix('progress').'.progress = "'.$paras['sSearch_'.$i].'"');
+                        $db->from('progress')->where('progress.progress = "'.$paras['sSearch_'.$i].'"')->where('progress.id = '.$db->dbprefix($c::DB_TABLE).'.progress');
                         break;
                     case 'status':
-                        $db->join('status', 'status.id = '.$c::DB_TABLE.'.status'.' AND '.$db->dbprefix('status').'.status = "'.$paras['sSearch_'.$i].'"');
+                        $db->from('status')->where("status.status = ".$db->escape($paras['sSearch_'.$i]))->where('status.id = '.$db->dbprefix($c::DB_TABLE).'.status');
                         break;
                     case 'primary_project':
-                        $db->join('projects', 'projects.proj_id = '.$c::DB_TABLE.'.primary_project'.' AND '.$db->dbprefix('projects').'.proj_name = "'.$paras['sSearch_'.$i].'"');
+                        $db->from('projects')->where('projects.proj_name = "'.$paras['sSearch_'.$i].'"')->where('projects.proj_id = '.$db->dbprefix($c::DB_TABLE).'.primary_project');
                         break;
                     case 'level1':
-                        $db->join('hightech_level', 'hightech_level.id = '.$c::DB_TABLE.'.level1'.' AND '.$db->dbprefix('hightech_level').'.hightech_name = "'.$paras['sSearch_'.$i].'"');
+                        $db->from('hightech_level')->where('hightech_level.hightech_name = "'.$paras['sSearch_'.$i].'"')->where('hightech_level.id = '.$db->dbprefix($c::DB_TABLE).'.level1');
                         break;
                     case 'area':
                         $db->where($aColumns[$i], $paras['sSearch_'.$i]);
@@ -356,8 +326,41 @@ class Clients extends MY_Model{
                 }
             }
         }
+        return $db;
+    }
 
-        return $db->count_all_results();
+    private static function _process_search_keyword($db, $paras){
+        $c = new Clients();
+        $aColumns = $c->config->item('clients_listing_cols');
+        $aTables = $c->config->item('clients_listing_tables');
+        $aFields = $c->config->item('clients_listing_fields');
+
+        foreach($aColumns as $i => $av){
+            switch($av){
+                case 'name':
+                case 'area':
+                case 'staff':
+                    $db->or_like($aTables[$i].'.'.$aFields[$i], $paras['sSearch']);
+                    break;
+                case 'progress':
+                    $db->from($aTables[$i])->where('progress.id = '.$db->dbprefix($c::DB_TABLE).'.progress')->or_like($aTables[$i].'.'.$aFields[$i], $paras['sSearch']);
+                    break;
+                case 'status':
+                    $db->from($aTables[$i])->where('status.id = '.$db->dbprefix($c::DB_TABLE).'.status')->or_like($aTables[$i].'.'.$aFields[$i], $paras['sSearch']);
+                    break;
+                case 'primary_project':
+                    $db->from($aTables[$i])->where('projects.proj_id = '.$db->dbprefix($c::DB_TABLE).'.primary_project')->or_like($aTables[$i].'.'.$aFields[$i], $paras['sSearch']);
+                    break;
+                case 'primary_project_year':
+                    $db->or_where($aTables[$i].'.'.$aFields[$i], $paras['sSearch']);
+                    break;
+                case 'level1':
+                    $db->from('hightech_level')->where('hightech_level.id = '.$db->dbprefix($c::DB_TABLE).'.level1')->or_like($aTables[$i].'.'.$aFields[$i], $paras['sSearch']);
+                    break;
+            }
+        }
+
+        return $db;
     }
 }
 

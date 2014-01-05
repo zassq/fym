@@ -17,4 +17,6 @@ $config['usertype']['A'] = '管理员';
 $config['usertype']['S'] = '员工';
 
 $config['clients_listing_cols'] = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
+$config['clients_listing_tables'] = array('clients', 'progress', 'status', 'projects', 'clients', 'hightech_level', 'clients', 'clients');
+$config['clients_listing_fields'] = array('name', 'progress', 'status', 'proj_name', 'primary_project_year', 'hightech_name', 'area', 'staff');
 ?>
