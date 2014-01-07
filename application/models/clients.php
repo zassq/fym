@@ -211,16 +211,16 @@ class Clients extends MY_Model{
                 switch($aColumns[$i]){
                     case 'progress':
                     case 'status':
-                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$k]." AND ".$_aTable.".".$aFields[$k]." = '".$db->escape($paras['sSearch_'.$i])."')";
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$i]." AND ".$_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i]).")";
                         break;
                     case 'primary_project':
-                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$k]." = '".$db->escape($paras['sSearch_'.$i])."')";
+                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i]).")";
                         break;
                     case 'level1':
-                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$k]." = '".$db->escape($paras['sSearch_'.$i])."')";
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i]).")";
                         break;
                     case 'area':
-                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." = '".$db->escape($paras['sSearch_'.$i])."'";
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i])."";
                         break;
                     default:
                         $_sWhere_ele[] = $_aTable.".".$aFields[$i]." LIKE '%".$db->escape_like_str($paras['sSearch_'.$i])."%'";
@@ -228,9 +228,10 @@ class Clients extends MY_Model{
                 }
             }
         }
+        if(count($_sWhere_ele)>0) $sWhere .= " AND".implode(" AND ", $_sWhere_ele);
 
         if($sWhere == 'WHERE ') $sWhere = '';
-        $sql = "SELECT ".$_client_table.".* FROM ".implode(', ', $sFrom)." ".$sWhere." ".$sOrder." ".$sLimit;
+        $sql = "SELECT SQL_CALC_FOUND_ROWS ".$_client_table.".* FROM ".implode(', ', $sFrom)." ".$sWhere." GROUP BY ".$_client_table.".id ".$sOrder." ".$sLimit;
         #echo '<pre>';var_dump($sql);die();
         return $sql;
     }
@@ -239,57 +240,26 @@ class Clients extends MY_Model{
         $c = new Clients();
         $db = $c->db;
         $sql = $c::_build_ajax_listing_details_sql($paras);
-    }
-
-    public static function _ajax_list_detail($paras, $mlClass, $pcClass){
-        $c = new Clients();
-        $db = $c->db;
-        $aColumns = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
-        $aTables = $c->config->item('clients_listing_tables');
-        $aFields = $c->config->item('clients_listing_fields');
 
         $return = array();
-        $db->select($c::DB_TABLE.'.*');
-        if ( isset( $paras['iDisplayStart'] ) && $paras['iDisplayLength'] != '-1' ){
-            $db->limit(intval($paras['iDisplayLength']), intval($paras['iDisplayStart']));
-        }
-
-        if ( isset($paras['iSortCol_0'])){
-            for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
-                if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
-                    $db->order_by($aColumns[ intval( $paras['iSortCol_'.$i] ) ], ($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc'));
-                }
-            }
-        }
-
-        if ( isset($paras['sSearch']) && $paras['sSearch'] != "" ){
-            /*for ( $i=0 ; $i<count($aColumns) ; $i++ ){
-                $db->or_like($aColumns[$i], $paras['sSearch']);
-            }*/
-            $db = $c::_process_search_keyword($db, $paras);
-        }
-
-        $db->from($c::DB_TABLE);
-
-        /* Individual column filtering */
-        $db = $c::_process_column_filtering($db, $aColumns, $paras);
-
-        $query = $db->get();
+        $query = $db->query($sql);
         if(!$query) return $return;
+
+        $total_query = $db->query("SELECT FOUND_ROWS() AS total");
+        if(!$total_query) return $return;
+        $_total = $total_query->first_row('array');
+        $return['iTotalDisplayRecords'] = $_total['total'];
 
         foreach ($query->result_array() as $row) {
             $return[$row['id']] = $row;
         }
         $client_ids = array_keys($return);
         $all_ml = $mlClass->get(0, 0, 'date desc');
-        //$all_pc = $pcClass->get();
+
         foreach($all_ml as $ml){
             if(in_array($ml->cid, $client_ids)) $return[$ml->cid]['marketing_log'][] = $ml;
         }
-        /*foreach($all_pc as $pc){
-            if(in_array($pc->client_id, $client_ids)) $return[$pc->client_id]['pc_info'][$pc->proj_id] = $pc;
-        }*/
-        #echo '<pre>';var_dump($a);die();
+
         return $return;
     }
 
@@ -360,7 +330,7 @@ class Clients extends MY_Model{
         return $return;
     }
 
-    public static function ajax_list_total($paras){
+    public static function _ajax_list_total($paras){
         $c = new Clients();
         $db = $c->db;
         $aColumns = $c->config->item('clients_listing_cols');

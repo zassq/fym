@@ -170,7 +170,10 @@ class Clients_controller extends CI_Controller {
             $pc = new Project_client();
             $level1 = Hightech_level::get_level1();
 
-            $_output_data = Clients::ajax_list_detail($paras, $ml, $pc);
+            $_ajax_data = Clients::ajax_list_detail($paras, $ml, $pc);
+            $_iTotalDisplayRecords = $_ajax_data['iTotalDisplayRecords'];
+            unset($_ajax_data['iTotalDisplayRecords']);
+            $_output_data = $_ajax_data;
             $aaData = array();
             foreach($_output_data as $k=>$v){
                 #echo '<pre>';var_dump($v);die();
@@ -191,7 +194,7 @@ class Clients_controller extends CI_Controller {
                 'sEcho' => $paras['sEcho'],
                 #"iTotalRecords" =>Clients::ajax_list_total($paras),
                 "iTotalRecords" => Clients::count_all() ,
-                "iTotalDisplayRecords" => Clients::ajax_list_total($paras) ,
+                "iTotalDisplayRecords" => $_iTotalDisplayRecords ,
                 "aaData" => $aaData,
                 'ccData' => Clients::ajax_list_detail_header($paras)
             );
