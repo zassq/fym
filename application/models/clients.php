@@ -139,7 +139,109 @@ class Clients extends MY_Model{
         return $return;
     }
 
-    public static function ajax_list_detail($paras, $mlClass, $pcClass){
+    public static function _build_ajax_listing_details_sql($paras){
+        $c = new Clients();
+        $db = $c->db;
+        $aColumns = $c->config->item('clients_listing_cols');
+        #$aColumns = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
+        $aTables = $c->config->item('clients_listing_tables');
+        $aFields = $c->config->item('clients_listing_fields');
+        $_client_table = $db->protect_identifiers($c::DB_TABLE, true);
+        $sFrom = array();
+        $sFrom[] = $_client_table;
+
+        // Paging
+        $sLimit = "";
+        if ( isset( $paras['iDisplayStart'] ) && $paras['iDisplayLength'] != '-1' ){
+            $sLimit = "LIMIT ".intval( $paras['iDisplayStart'] ).", ".intval( $paras['iDisplayLength'] );
+        }
+
+        // Ordering
+        $sOrder = "";
+        if ( isset( $paras['iSortCol_0'] ) ){
+            $sOrder = "ORDER BY  ";
+            for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
+                if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
+                    $sOrder .= "`".$aColumns[ intval( $paras['iSortCol_'.$i] ) ]."` ".($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
+                }
+            }
+
+            $sOrder = substr_replace( $sOrder, "", -2 );
+            if ( $sOrder == "ORDER BY" ){
+                $sOrder = "";
+            }
+        }
+
+        // Filtering
+        $sWhere = 'WHERE ';
+        $_sWhere_ele = array();
+        if(isset($paras['sSearch']) && '' != $paras['sSearch']){
+            foreach($aColumns as $k => $ac){
+                $_aTable = $db->protect_identifiers($aTables[$k], true);
+                if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
+                switch($ac){
+                    case 'name':
+                    case 'primary_project_year':
+                    case 'area':
+                    case 'staff':
+                    default:
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%'";
+                        break;
+                    case 'progress':
+                    case 'status':
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$k]." AND ".$_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%')";
+                        break;
+                    case 'level1':
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%')";
+                        break;
+                    case 'primary_project':
+                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%')";
+                        break;
+                }
+            }
+            if(count($_sWhere_ele)>0) $sWhere .= implode(" OR ", $_sWhere_ele);
+        }
+
+        // Individual column filtering
+        $_sWhere_ele = array();
+        for($i=0;$i<count($aColumns);$i++){
+            if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
+                $_aTable = $db->protect_identifiers($aTables[$i], true);
+                if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
+                switch($aColumns[$i]){
+                    case 'progress':
+                    case 'status':
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$k]." AND ".$_aTable.".".$aFields[$k]." = '".$db->escape($paras['sSearch_'.$i])."')";
+                        break;
+                    case 'primary_project':
+                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$k]." = '".$db->escape($paras['sSearch_'.$i])."')";
+                        break;
+                    case 'level1':
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$k]." = '".$db->escape($paras['sSearch_'.$i])."')";
+                        break;
+                    case 'area':
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." = '".$db->escape($paras['sSearch_'.$i])."'";
+                        break;
+                    default:
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." LIKE '%".$db->escape_like_str($paras['sSearch_'.$i])."%'";
+                        break;
+                }
+            }
+        }
+
+        if($sWhere == 'WHERE ') $sWhere = '';
+        $sql = "SELECT ".$_client_table.".* FROM ".implode(', ', $sFrom)." ".$sWhere." ".$sOrder." ".$sLimit;
+        #echo '<pre>';var_dump($sql);die();
+        return $sql;
+    }
+
+    public static function ajax_list_detail($paras, $mlClass){
+        $c = new Clients();
+        $db = $c->db;
+        $sql = $c::_build_ajax_listing_details_sql($paras);
+    }
+
+    public static function _ajax_list_detail($paras, $mlClass, $pcClass){
         $c = new Clients();
         $db = $c->db;
         $aColumns = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
