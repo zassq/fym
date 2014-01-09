@@ -21,7 +21,14 @@
             "export" : "导出",
             "no_select" : "请至少选择一家企业导出",
             "need_at_least_one_project" : "请至少选择一种项目",
-            "need_project_year" : "请选择项目年份"
+            "need_project_year" : "请选择项目年份",
+            "await" : "等待上传中...",
+            "uploading": "上传中...",
+            "file_type_error":"文件格式错误！",
+            "analysing":"分析名单中...",
+            "analyse_done": "分析完成！",
+            "error": "上传错误！",
+            "error_cols": "CSV文件格式错误！"
         }
     }
 }

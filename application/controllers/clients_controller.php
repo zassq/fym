@@ -189,7 +189,11 @@ class Clients_controller extends CI_Controller {
                     $this->load->view('client_list_items/client_list_note', $v, true),
                     $this->load->view('client_list_items/client_list_ml', $v, true)
                 );
+                // to prevent saved variables in view
+                $_dump = $this->load->view('client_list_items/client_list_ml', array('marketing_log' => ''), true);
+                unset($_dump);
             }
+            #echo '<pre>';var_dump($aaData);die();
             $output = array(
                 'sEcho' => $paras['sEcho'],
                 #"iTotalRecords" =>Clients::ajax_list_total($paras),
@@ -234,6 +238,7 @@ class Clients_controller extends CI_Controller {
     }
 
     public function client_filter(){
+        $this->data['here'] = 'client_filter';
         $this->data['load_extra'] = array('clients_filter');
         $this->load->view('common/head', $this->data);
         $this->load->view('clients_filter', $this->data);
@@ -241,7 +246,7 @@ class Clients_controller extends CI_Controller {
     }
 
     public function client_filter_upload(){
-        $upload_path_url = base_url() . 'assets'.DC.'uploads'.DC;
+        #$upload_path_url = base_url() . 'assets'.DC.'uploads'.DC;
         $clist = 'clist';
 
         $upload_config['upload_path'] = FCPATH . 'assets'.DC.'uploads'.DC;
@@ -479,5 +484,16 @@ class Clients_controller extends CI_Controller {
         }else{
             echo json_encode(array('msg' => 'error'));
         }
+    }
+
+    public function client_upload(){
+        $users = new Staff();
+        $this->data['staff'] = Staff::get_staff();
+        $this->load->helper('form');
+        $this->data['here'] = 'client_upload';
+        $this->data['load_extra'] = array('client_upload');
+        $this->load->view('common/head', $this->data);
+        $this->load->view('client_upload', $this->data);
+        $this->load->view('common/foot', $this->data);
     }
 }

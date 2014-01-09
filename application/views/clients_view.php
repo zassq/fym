@@ -7,15 +7,15 @@
     </div>
     <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <p class="col-md-4"><strong><?php echo lang('company_details') ?></strong></p>
-                <p class="col-md-8">
+            <div class="form-group clearfix">
+                <div class="col-md-4"><strong><?php echo lang('company_details') ?></strong></div>
+                <div class="col-md-8">
                     <?php if(!empty($client->address)) echo $client->address."<br />"; ?>
                     <?php if(!empty($client->contact)):?><span class="small"><?php echo lang('contact') ?></span>：<?php echo $client->contact; ?><br/><?php endif;?>
                     <?php if(!empty($client->phone1)) echo $client->phone1."<br />"; ?>
                     <?php if(!empty($client->phone2)) echo $client->phone2."<br />"; ?>
                     <?php if(!empty($client->phone3)) echo $client->phone3."<br />"; ?>
-                </p>
+                </div>
             </div>
             <div class="form-group">
                 <div class="col-md-12 small"><?php if(!empty($client->note)) echo nl2br($client->note).""; ?></div>
@@ -50,7 +50,7 @@
             <?php endif; ?>
             <p class="form-group">
                 <span class="col-md-4 col-xs-6"><strong><?php echo lang('hightech') ?></strong></span>
-                <span class="col-md-8 col-xs-6"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo ' | <span class="small">'.lang('cert_code').'：'.$certs['H']->cert_code.'</span>';}else echo '<span class="text-danger">'.lang('no').'</span>'; ?><?php if(isset($client->hightech_year)): ?> | <span class="small"><?php echo $client->hightech_year.lang('year'); ?></span><?php endif;?></span>
+                <span class="col-md-8 col-xs-6"><?php if($client->is_hightech == 'Y'){echo '<span class="text-success">'.lang('yes').'</span>';if(isset($certs['H'])) echo '<br /><span class="small">'.lang('cert_code').'：'.$certs['H']->cert_code.'</span> | <span class="small">'.$client->hightech_year.lang('year').'</span>';}else echo '<span class="text-danger">'.lang('no').'</span>'; ?></span>
             </p>
             <p class="form-group">
                 <span class="col-md-4 col-xs-6"><strong><?php echo lang('software_company') ?></strong></span>

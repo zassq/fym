@@ -188,7 +188,8 @@ em{
     position: relative;
     overflow: hidden;
 }
-#new_client_list{
+#new_client_list,
+#client_upload_file{
     position: absolute;
     left: 0;
     top:0;

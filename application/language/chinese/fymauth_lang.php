@@ -42,7 +42,9 @@ $lang['client_search'] = "老客户查询";
 $lang['client_listing'] = "新客户筛选";
 $lang['use_instruction'] = "使用说明";
 $lang['clients_filter_instruction'] = "请使用csv文档上传新客户列表，分行显示新客户公司名称。";
+$lang['clients_upload_instruction'] = "请使用csv文档格式并按下列格式编制，上传客户列表。（客户代表默认为当前用户，具有经理权限的用户可以选择客户代表）";
 $lang['new_client_list'] = "新客户名单";
+$lang['client_list'] = "客户名单";
 
 $lang['my_dash'] = "我的主页";
 
@@ -134,4 +136,7 @@ $lang['successful_edit_marketing_log'] =  '成功修改跟进记录';
 $lang['successful_delete_marketing_log'] =  '成功删除跟进记录';
 $lang['project_year_error'] =  '错误设置项目年份，请更改后重新提交。';
 $lang['please_set'] =  '请设置';
+
+$lang['client_upload'] =  '客户上传';
+$lang['upload_content'] =  '上传内容';
 ?>

@@ -3,58 +3,81 @@ var on_unload,
 
 
 $(function(){
-    'use strict';
     var client_data;
     $(document).on('uploadStateChange', stateChangeHandler);
     $(window).on('beforeunload', function(){
+        console.log(on_unload);
         return on_unload;
     });
     $(window).on('unload', function(){
         // delete exist upload list?
     });
-    $('#new_client_list').fileupload({
-        url: site_url+'client_filter_upload',
-        dataType: 'json',
-        autoUpload: false,
-        acceptFileTypes: /(\.|\/)(csv)$/i,
-        maxFileSize: 5000000, // 5MB
-        paramName: 'clist',
-        formAcceptCharset: 'utf-8',
-        message: {
-            acceptFileTypes: "file type error!!",
-            maxFileSize: 'File toooooo big!'
-        }
-    }).on('fileuploadadd', function(e, data){
-            $.event.trigger({type:'uploadStateChange',currentState: 'file_loaded', filename: data.files[0].name});
-        }).on('fileuploadprocessalways', function(e, data){
-            var index = data.index,
-                file = data.files[index];
-            if(file.error){
-                $.event.trigger({type:'uploadStateChange',currentState: 'file_type_error', filename: file.name});
-            }else{
-                // good to upload now
-                data.submit();
+
+    // New client filtering page
+    if($('#new_client_list').length > 0){
+        $('#new_client_list').fileupload({
+            url: site_url+'client_filter_upload',
+            dataType: 'json',
+            autoUpload: false,
+            acceptFileTypes: /(\.|\/)(csv)$/i,
+            maxFileSize: 5000000, // 5MB
+            paramName: 'clist',
+            formAcceptCharset: 'utf-8',
+            message: {
+                acceptFileTypes: "file type error!!",
+                maxFileSize: 'File toooooo big!'
             }
-        }).on('fileuploadsubmit', function(e,data){
-            $.event.trigger({type:'uploadStateChange',currentState: 'uploading'});
-        }).on('fileuploaddone', function (e, data) {
-            $.event.trigger({type:'uploadStateChange',currentState: 'analysing'});
-            $('#upload_file_name_outer').stop(true,true).fadeOut();
-            data.context = $('#client_filter_list_table > tbody');
-            if(typeof data.result.error != "undefined" && data.result.error != ''){
-                $.event.trigger({type:'uploadStateChange',currentState: data.result.error});
-            }else if(typeof data.result.files != "undefined" && data.result.files != ''){
-                client_data = data.result.files;
-                $.event.trigger({type:'uploadStateChange',currentState: 'analyse_done'});
-                data.context = $('#client_filter_list_table').find('tbody');
-                data.context.prepend(Handlebars.templates['row'](data.result));
-                $('#client_filter_list').fadeIn();
+        }).on('fileuploadadd', function(e, data){
+                $.event.trigger({type:'uploadStateChange',currentState: 'file_loaded', filename: data.files[0].name});
+            }).on('fileuploadprocessalways', function(e, data){
+                var index = data.index,
+                    file = data.files[index];
+                if(file.error){
+                    $.event.trigger({type:'uploadStateChange',currentState: 'file_type_error', filename: file.name});
+                }else{
+                    // good to upload now
+                    data.submit();
+                }
+            }).on('fileuploadsubmit', function(e,data){
+                $.event.trigger({type:'uploadStateChange',currentState: 'uploading'});
+            }).on('fileuploaddone', function (e, data) {
+                $.event.trigger({type:'uploadStateChange',currentState: 'analysing'});
+                $('#upload_file_name_outer').stop(true,true).fadeOut();
+                data.context = $('#client_filter_list_table > tbody');
+                if(typeof data.result.error != "undefined" && data.result.error != ''){
+                    $.event.trigger({type:'uploadStateChange',currentState: data.result.error});
+                }else if(typeof data.result.files != "undefined" && data.result.files != ''){
+                    client_data = data.result.files;
+                    $.event.trigger({type:'uploadStateChange',currentState: 'analyse_done'});
+                    data.context = $('#client_filter_list_table').find('tbody');
+                    data.context.prepend(Handlebars.templates['row'](data.result));
+                    $('#client_filter_list').fadeIn();
+                }else{
+                    $.event.trigger({type:'uploadStateChange',currentState: 'error'});
+                }
+            }).on('fileuploadfail', function (e, data) {
+                $.event.trigger({type:'uploadStateChange',currentState: 'error', error: data.errorThrown});
+            });
+
+        $('#export_submit').click(function(e){
+            e.preventDefault();
+            var cs = $('input:checkbox:checked');
+            if(cs.length > 0){
+                on_unload = '';
+                console.log(on_unload);
+                $('form').submit();
+                on_unload = lang.show('before_unload');
             }else{
-                $.event.trigger({type:'uploadStateChange',currentState: 'error'});
+                alert(lang.show('no_select'));
             }
-        }).on('fileuploadfail', function (e, data) {
-            $.event.trigger({type:'uploadStateChange',currentState: 'error', error: data.errorThrown});
         });
+    }
+
+    // Client upload page
+    if($('#client_upload_file').length > 0){
+        on_unload = '';
+        console.log(lang);
+    }
 
     Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
         if (arguments.length < 3)
@@ -87,10 +110,10 @@ $(function(){
 
     Handlebars.registerHelper('lang_call', function(lang_string1){
         if (arguments.length < 2)
-            throw new Error("Handlerbars Helper 'lang' needs 1 parameters");
+            throw new Error("Handlerbars Helper 'lang_call' needs 1 parameters");
 
         if ('' == lang)
-            throw new Error("Handlerbars Helper 'lang' needs jQuery Lang library");
+            throw new Error("Handlerbars Helper 'lang_call' needs jQuery Lang library");
 
         return lang.show(lang_string1);
     });
@@ -99,18 +122,6 @@ $(function(){
         if(typeof site_url == 'undefined' || '' == site_url)
             throw new Error("Handlerbars Helper 'lang' needs site_url parameter");
         return site_url;
-    });
-
-    $('#export_submit').click(function(e){
-        e.preventDefault();
-        var cs = $('input:checkbox:checked');
-        if(cs.length > 0){
-            on_unload = '';
-            console.log(on_unload);
-            $('form').submit();
-        }else{
-            alert(lang.show('no_select'));
-        }
     });
 });
 
@@ -152,15 +163,15 @@ function addToMyClientList(item_id){
 function stateChangeHandler(e){
     'use strict';
     var upload_status = {
-            await:'等待上传中...',
-            uploading: '上传中...',
-            file_type_error:'文件格式错误！',
-            analysing:'分析名单中...',
-            analyse_done: '分析完成！',
-            error: '上传错误！',
-            error_cols: 'CSV文件格式错误！'
+            await: lang.show('await'),
+            uploading: lang.show('uploading'),
+            file_type_error:lang.show('file_type_error'),
+            analysing:lang.show('analysing'),
+            analyse_done: lang.show('analyse_done'),
+            error: lang.show('error'),
+            error_cols: lang.show('error_cols')
         },
-        uploadBtn = $('#new_client_list'),
+        uploadBtn = $('.uploadBtn'),
         uploadBtn_outer = $('#client_upload'),
         uploadFileName_outer = $('#upload_file_name_outer'),
         display_status = $('#filter_status');

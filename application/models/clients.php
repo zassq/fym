@@ -139,24 +139,16 @@ class Clients extends MY_Model{
         return $return;
     }
 
-    public static function _build_ajax_listing_details_sql($paras){
-        $c = new Clients();
-        $db = $c->db;
-        $aColumns = $c->config->item('clients_listing_cols');
-        #$aColumns = array( 'name', 'progress', 'status', 'primary_project', 'primary_project_year','level1', 'area', 'staff' );
-        $aTables = $c->config->item('clients_listing_tables');
-        $aFields = $c->config->item('clients_listing_fields');
-        $_client_table = $db->protect_identifiers($c::DB_TABLE, true);
-        $sFrom = array();
-        $sFrom[] = $_client_table;
-
-        // Paging
+    private function _build_paging($paras){
         $sLimit = "";
         if ( isset( $paras['iDisplayStart'] ) && $paras['iDisplayLength'] != '-1' ){
             $sLimit = "LIMIT ".intval( $paras['iDisplayStart'] ).", ".intval( $paras['iDisplayLength'] );
         }
+        return $sLimit;
+    }
 
-        // Ordering
+    private function _build_ordering($paras){
+        $aColumns = $this->config->item('clients_listing_cols');
         $sOrder = "";
         if ( isset( $paras['iSortCol_0'] ) ){
             $sOrder = "ORDER BY  ";
@@ -171,13 +163,16 @@ class Clients extends MY_Model{
                 $sOrder = "";
             }
         }
+        return $sOrder;
+    }
 
-        // Filtering
-        $sWhere = 'WHERE ';
+    private function _build_filtering($paras, $aColumns, $aTables, $aFields, $_client_table){
         $_sWhere_ele = array();
+        $sFrom = array();
+        $return = array();
         if(isset($paras['sSearch']) && '' != $paras['sSearch']){
             foreach($aColumns as $k => $ac){
-                $_aTable = $db->protect_identifiers($aTables[$k], true);
+                $_aTable = $this->db->protect_identifiers($aTables[$k], true);
                 if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
                 switch($ac){
                     case 'name':
@@ -185,61 +180,108 @@ class Clients extends MY_Model{
                     case 'area':
                     case 'staff':
                     default:
-                        $_sWhere_ele[] = $_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%'";
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%'";
                         break;
                     case 'progress':
                     case 'status':
-                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$k]." AND ".$_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%')";
+                        #if ( isset($paras['bSearchable_'.$k]) && $paras['bSearchable_'.$k] == "true" && $paras['sSearch_'.$k] != '' && ($paras['sSearch_'.$k] == 'progress' || $paras['sSearch_'.$k] == 'status' )) break;
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$k]." AND ".$_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
                         break;
                     case 'level1':
-                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%')";
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
                         break;
                     case 'primary_project':
-                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$k]." LIKE '%".$db->escape_like_str($paras['sSearch'])."%')";
+                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
                         break;
                 }
             }
-            if(count($_sWhere_ele)>0) $sWhere .= implode(" OR ", $_sWhere_ele);
+            // For marketing_log
+            $ml_table = $this->db->protect_identifiers("marketing_log", true);
+            $sFrom[] = $ml_table;
+            $_sWhere_ele[] = "(".$ml_table.".cid = ".$_client_table.".id AND ".$ml_table.".detail LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
         }
+        $return[] = $_sWhere_ele;
+        $return[] = $sFrom;
+        return $return;
+    }
 
-        // Individual column filtering
+    public function _build_individual_filter($paras, $aColumns, $aTables, $aFields, $_client_table){
         $_sWhere_ele = array();
+        $sFrom = array();
+        $return = array();
         for($i=0;$i<count($aColumns);$i++){
             if ( isset($paras['bSearchable_'.$i]) && $paras['bSearchable_'.$i] == "true" && $paras['sSearch_'.$i] != '' ){
-                $_aTable = $db->protect_identifiers($aTables[$i], true);
+                $_aTable = $this->db->protect_identifiers($aTables[$i], true);
                 if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
                 switch($aColumns[$i]){
                     case 'progress':
                     case 'status':
-                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$i]." AND ".$_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i]).")";
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$i]." AND ".$_aTable.".".$aFields[$i]." = ".$this->db->escape($paras['sSearch_'.$i]).")";
                         break;
                     case 'primary_project':
-                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i]).")";
+                        $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$i]." = ".$this->db->escape($paras['sSearch_'.$i]).")";
                         break;
                     case 'level1':
-                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i]).")";
+                        $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".level1 AND ".$_aTable.".".$aFields[$i]." = ".$this->db->escape($paras['sSearch_'.$i]).")";
                         break;
                     case 'area':
-                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." = ".$db->escape($paras['sSearch_'.$i])."";
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." = ".$this->db->escape($paras['sSearch_'.$i])."";
                         break;
                     default:
-                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." LIKE '%".$db->escape_like_str($paras['sSearch_'.$i])."%'";
+                        $_sWhere_ele[] = $_aTable.".".$aFields[$i]." LIKE '%".$this->db->escape_like_str($paras['sSearch_'.$i])."%'";
                         break;
                 }
             }
         }
-        if(count($_sWhere_ele)>0) $sWhere .= " AND".implode(" AND ", $_sWhere_ele);
+        $return[] = $_sWhere_ele;
+        $return[] = $sFrom;
+        return $return;
+    }
+
+    public function _build_ajax_listing_details_sql($paras, $forHeader = false){
+        $aColumns = $this->config->item('clients_listing_cols');
+        $aTables = $this->config->item('clients_listing_tables');
+        $aFields = $this->config->item('clients_listing_fields');
+        $_client_table = $this->db->protect_identifiers($this::DB_TABLE, true);
+        $sFrom = array();
+        $sFrom[] = $_client_table;
+        $sWhere = 'WHERE ';
+
+        // Paging
+        $sLimit = $this->_build_paging($paras);
+
+        // Ordering
+        $sOrder = $this->_build_ordering($paras);
+
+        // Filtering
+        $_filter = $this->_build_filtering($paras, $aColumns, $aTables, $aFields, $_client_table);
+        list($_sWhere_ele, $_sFrom) = $_filter;
+        $sFrom = array_unique(array_merge($_sFrom, $sFrom));
+
+        if(count($_sWhere_ele)>0) $sWhere .= "(".implode(" OR ", $_sWhere_ele).")";
+        unset($_sWhere_ele);
+
+        // Individual column filtering
+        $_individual_filter= $this->_build_individual_filter($paras, $aColumns, $aTables, $aFields, $_client_table);
+        list($_sWhere_ele, $_sFrom) = $_individual_filter;
+        $sFrom = array_unique(array_merge($_sFrom, $sFrom));
+
+        if(count($_sWhere_ele)>0) $sWhere .= (($sWhere == 'WHERE ')? '' : " AND").implode(" AND ", $_sWhere_ele);
 
         if($sWhere == 'WHERE ') $sWhere = '';
         $sql = "SELECT SQL_CALC_FOUND_ROWS ".$_client_table.".* FROM ".implode(', ', $sFrom)." ".$sWhere." GROUP BY ".$_client_table.".id ".$sOrder." ".$sLimit;
         #echo '<pre>';var_dump($sql);die();
+        if($forHeader){
+            $return = array($_client_table, $sFrom, $sWhere, $sLimit);
+            return $return;
+        }
         return $sql;
     }
 
     public static function ajax_list_detail($paras, $mlClass){
         $c = new Clients();
         $db = $c->db;
-        $sql = $c::_build_ajax_listing_details_sql($paras);
+        $sql = $c->_build_ajax_listing_details_sql($paras);
 
         $return = array();
         $query = $db->query($sql);
@@ -248,22 +290,78 @@ class Clients extends MY_Model{
         $total_query = $db->query("SELECT FOUND_ROWS() AS total");
         if(!$total_query) return $return;
         $_total = $total_query->first_row('array');
-        $return['iTotalDisplayRecords'] = $_total['total'];
 
         foreach ($query->result_array() as $row) {
             $return[$row['id']] = $row;
         }
         $client_ids = array_keys($return);
         $all_ml = $mlClass->get(0, 0, 'date desc');
-
         foreach($all_ml as $ml){
             if(in_array($ml->cid, $client_ids)) $return[$ml->cid]['marketing_log'][] = $ml;
+        }
+
+        $return['iTotalDisplayRecords'] = $_total['total'];
+        return $return;
+    }
+
+    public static function ajax_list_detail_header($paras){
+        $c = new Clients();
+        $db = $c->db;
+        $aColumns = $c->config->item('clients_listing_cols');
+        $aTables = $c->config->item('clients_listing_tables');
+        $aFields = $c->config->item('clients_listing_fields');
+        $_sql = $c->_build_ajax_listing_details_sql($paras, true);
+        list($_client_table, $sFrom, $sWhere, $sLimit) = $_sql;
+        $return = array();
+
+        foreach($aColumns as $k=> $v){
+            $_aTable = $db->protect_identifiers($aTables[$k], true);
+            $sql = '';
+            if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
+            switch($v){
+                case 'progress':
+                case 'status':
+                    $sql .= "SELECT DISTINCT ".$_aTable.".".$aFields[$k].
+                           " FROM ".implode(', ', $sFrom).
+                           $sWhere.(( '' == $sWhere ) ? ' WHERE ' : ' AND ').$_aTable.".id = ".$_client_table.".".$aFields[$k]
+                           #." ".$sLimit
+                    ;
+                    break;
+                case 'primary_project':
+                    $sql .= "SELECT DISTINCT ".$_aTable.".".$aFields[$k]." AS primary_project".
+                        " FROM ".implode(', ', $sFrom).
+                        $sWhere.(( '' == $sWhere ) ? ' WHERE ' : ' AND ').$_aTable.".proj_id = ".$_client_table.".primary_project"
+                        #." ".$sLimit
+                    ;
+                    break;
+                case 'level1':
+                    $sql .= "SELECT DISTINCT ".$_aTable.".".$aFields[$k]." AS level1".
+                        " FROM ".implode(', ', $sFrom).
+                        $sWhere.(( '' == $sWhere ) ? ' WHERE ' : ' AND ').$_aTable.".id = ".$_client_table.".level1"
+                        #." ".$sLimit
+                    ;
+                    break;
+                default:
+                    $sql .= "SELECT DISTINCT ".$_client_table.".".$v.
+                        " FROM ".implode(', ', $sFrom).
+                        $sWhere
+                        #." ".$sLimit
+                    ;
+                    break;
+            }
+
+            $query = $db->query($sql);
+            if($query){
+                foreach($query->result_array() as $row){
+                    if(!empty($row[$v])) $return[$k][] = $row[$v];
+                }
+            }
         }
 
         return $return;
     }
 
-    public static function ajax_list_detail_header($paras){
+    public static function _ajax_list_detail_header($paras){
         $c = new Clients();
         $db = $c->db;
         $aColumns = $c->config->item('clients_listing_cols');

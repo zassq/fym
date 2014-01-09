@@ -1,4 +1,4 @@
-var lang = lang || new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json', afterInit: function(){on_unload = this.show('before_unload');}});
+var lang = lang || new $.lang({lang_file: site_url+'assets/js/lang/zh-cn.json'});
 
 $(function(){
     'use strict';

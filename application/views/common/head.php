@@ -85,7 +85,8 @@
                         <li><a href="<?php echo site_url('clients/add'); ?>"><?php echo lang('add_client') ?></a></li>
                     </ul>
                 </li>
-                <li><a href="<?php echo site_url('client_filter'); ?>"><?php echo lang('client_listing') ?></a></li>
+                <li<?php if($here == 'client_filter') echo ' class="active"'; ?>><a href="<?php echo site_url('client_filter'); ?>"><?php echo lang('client_listing') ?></a></li>
+                <li<?php if($here == 'client_upload') echo ' class="active"'; ?>><a href="<?php echo site_url('client_upload'); ?>"><?php echo lang('client_upload') ?></a></li>
                 <?php if($userinfo->access == 'fullaccess' || $userinfo->access == 'manager'): ?>
                     <li<?php if($here == 'users') echo ' class="active"'; ?>><a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang('user_mgt') ?><b class="caret"></b></a>
                         <ul class="dropdown-menu">

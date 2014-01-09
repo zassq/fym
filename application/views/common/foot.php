@@ -42,13 +42,14 @@
             case 'dataTables': ?>
                 <script src="<?php echo site_url(); ?>assets/js/datatables/jquery.dataTables.min.js"></script>
                 <script src="<?php echo site_url(); ?>assets/js/datatables/bootstrap-dataTables.min.js"></script>
-                <script src="<?php echo site_url(); ?>assets/js/datatables/ColumnFilterWidgets.js"></script>
+                <script src="<?php echo site_url(); ?>assets/js/datatables/ColumnFilterWidgets.min.js"></script>
             <?php break;
             case 'datatimepicker': ?>
                 <script src="<?php echo site_url(); ?>assets/js/moment.min.js"></script>
                 <script src="<?php echo site_url(); ?>assets/js/bootstrap-datetimepicker.min.js"></script>
                 <script src="<?php echo site_url(); ?>assets/js/bootstrap-datetimepicker.zh-CN.min.js"></script>
             <?php break;
+            case 'client_upload':
             case 'clients_filter': ?>
                 <script src="<?php echo site_url(); ?>assets/js/jquery.ui.widget.min.js"></script>
                 <script src="<?php echo site_url(); ?>assets/js/jquery.iframe-transport.min.js"></script>
