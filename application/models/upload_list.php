@@ -11,6 +11,8 @@ class Upload_list extends MY_Model{
     public $upload_date;
 
     public $upload_by;
+
+    public $upload_type;
 }
 
 ?>

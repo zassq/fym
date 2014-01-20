@@ -66,5 +66,6 @@ $route['ml_edit/(:num)'] = 'ml_action/ml_edit/$1';
 $route['ml_delete/(:num)'] = 'ml_action/ml_delete/$1';
 
 $route['client_upload'] = 'clients_controller/client_upload';
+$route['client_list_upload'] = 'clients_controller/client_list_upload';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

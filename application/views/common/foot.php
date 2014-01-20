@@ -59,6 +59,9 @@
                 <script src="<?php echo site_url(); ?>assets/js/handlebars.runtime-v1.1.2.js"></script>
                 <script src="<?php echo site_url(); ?>assets/js/templates/row.js"></script>
                 <script src="<?php echo site_url(); ?>assets/js/clients_filter.js"></script>
+                <?php if($le == 'client_upload'): ?>
+                <script src="<?php echo site_url(); ?>assets/js/templates/client_row.js"></script>
+                <?php endif; ?>
                 <?php break;
             case 'dash':?>
                 <script src="<?php echo site_url(); ?>assets/js/handlebars.runtime-v1.1.2.js"></script>

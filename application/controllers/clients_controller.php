@@ -271,6 +271,7 @@ class Clients_controller extends CI_Controller {
             $ul = new Upload_list();
             $ul->file_name = $data['full_path'];
             $ul->upload_by = $this->userinfo->name;
+            $ul->upload_type = 'F';
             $ul->upload_date = date('Y-m-d H:i:s', time());
             $ul->save();
             $ml = new Marketinglog();
@@ -495,5 +496,78 @@ class Clients_controller extends CI_Controller {
         $this->load->view('common/head', $this->data);
         $this->load->view('client_upload', $this->data);
         $this->load->view('common/foot', $this->data);
+    }
+
+    public function client_list_upload(){
+        #$upload_path_url = base_url() . 'assets'.DC.'uploads'.DC;
+        $clist = 'clist';
+
+        $upload_config['upload_path'] = FCPATH . 'assets'.DC.'uploads'.DC;
+        $upload_config['allowed_types'] = 'csv';
+        $upload_config['max_size'] = '50000';
+        $this->load->library('upload', $upload_config);
+
+        if($this->upload->do_upload($clist)){
+            $data = $this->upload->data();
+            $this->load->library('fymcsv');
+            $csv = new Fymcsv();
+            $csv_content = $csv->parseCSV($data['full_path']);
+
+            if($csv_content['cols'] <> 10){
+                unlink($data['full_path']);
+                echo json_encode(array('error' => 'error_cols'));
+                exit();
+            }
+
+            $return_json = array();
+            $this->load->model(array('upload_list', 'upload_list_items'));
+            $ul = new Upload_list();
+            $ul->file_name = $data['full_path'];
+            $ul->upload_by = $this->userinfo->name;
+            $ul->upload_type = 'U';
+            $ul->upload_date = date('Y-m-d H:i:s', time());
+            $ul->save();
+            $ml = new Marketinglog();
+            $all_ml = $ml->get();
+
+            foreach($csv_content['data'] as $new_client){
+                $tmp_client = new Clients();
+                $new_client_name = $new_client[0];
+                if (preg_match("/[\x7f-\xff]/", $new_client_name))
+                    $new_client_name = iconv('gb2312', 'utf-8', $new_client_name);
+                $find = $tmp_client->findClientByName($new_client_name);
+                $ul_items = new Upload_list_items();
+                $ul_items->company_name = $new_client_name;
+                $ul_items->list_id = $ul->list_id;
+                $ul_items->existed_client_id = $find ? $tmp_client->id : 0;
+                $ul_items->save();
+
+                $tmp_return = new stdClass();
+                $tmp_return->item_id = $ul_items->item_id;
+                $tmp_return->company_name = $ul_items->company_name;
+                $tmp_return->list_id = $ul_items->list_id;
+                $tmp_return->existed_client = $find ? true : false;
+                if($find){
+                    foreach($all_ml as $c_ml){
+                        if($c_ml->cid == $ul_items->existed_client_id) $tmp_return->marketing_log[] = $c_ml;
+                    }
+                    $tmp_return->client_id = $ul_items->existed_client_id;
+                    $tmp_return->is_hightech = $tmp_client->is_hightech;
+                    $tmp_return->hightech_cert_code = !empty($tmp_client->hightech_cert_id) ? Certs::get_certs_by_id($tmp_client->hightech_cert_id) : NULL;
+                    $tmp_return->is_soft_comp = $tmp_client->is_soft_comp;
+                    $tmp_return->soft_comp_cert_code = !empty($tmp_client->soft_comp_cert_id) ? Certs::get_certs_by_id($tmp_client->soft_comp_cert_id) : NULL;
+                }
+                $return_json[] = $tmp_return;
+                unset($tmp_client);
+                unset($ul_items);
+                unset($tmp_return);
+            }
+            echo json_encode(array("files" => $return_json));
+            exit();
+        }else{
+            echo $this->upload->display_errors();exit;
+        }
+
+
     }
 }
