@@ -3,7 +3,7 @@
     <p><a href="<?php echo site_url('clients/add'); ?>" class="btn btn-primary"><?php echo lang('add_client') ?></a></p>
 
 
-    <?php# if(!empty($clients)):?>
+    <?php # if(!empty($clients)):?>
     <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered sorting_table_1" id="client_list_table">
             <thead>

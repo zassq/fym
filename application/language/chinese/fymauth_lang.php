@@ -42,7 +42,7 @@ $lang['client_search'] = "老客户查询";
 $lang['client_listing'] = "新客户筛选";
 $lang['use_instruction'] = "使用说明";
 $lang['clients_filter_instruction'] = "请使用csv文档上传新客户列表，分行显示新客户公司名称。";
-$lang['clients_upload_instruction'] = "请使用csv文档格式并按下列格式编制，上传客户列表。（客户代表默认为当前用户，具有经理权限的用户可以选择客户代表）";
+$lang['clients_upload_instruction'] = "请使用csv文档格式并按下列格式编制，上传客户列表。";
 $lang['new_client_list'] = "新客户名单";
 $lang['client_list'] = "客户名单";
 
@@ -126,6 +126,8 @@ $lang['primary_project'] = '主要项目';
 $lang['no_client_error'] = '无所需客户信息。';
 $lang['year'] = '年';
 $lang['no_project_type'] = '尚无项目记录';
+$lang['project'] = '项目';
+$lang['client_info'] = '企业信息';
 
 $lang['marketing_log_edit'] =  '修改跟进记录';
 $lang['marketing_log_delete'] =  '删除跟进记录';

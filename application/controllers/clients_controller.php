@@ -170,6 +170,11 @@ class Clients_controller extends CI_Controller {
             $pc = new Project_client();
             $level1 = Hightech_level::get_level1();
 
+            // 设置权限
+            if($this->userinfo->access == 'staff'){
+                $paras['staff_id'] = $this->userinfo->id;
+            }
+
             $_ajax_data = Clients::ajax_list_detail($paras, $ml, $pc);
             $_iTotalDisplayRecords = $_ajax_data['iTotalDisplayRecords'];
             unset($_ajax_data['iTotalDisplayRecords']);
@@ -181,7 +186,7 @@ class Clients_controller extends CI_Controller {
                     $this->load->view('client_list_items/client_list_name', $v, true),
                     $this->data['progress'][$v['progress']],
                     $this->data['status'][$v['status']],
-                    $this->data['projects'][$v['primary_project']],
+                    ($v['primary_project'] == '0') ? '' : $this->data['projects'][$v['primary_project']],
                     ($v['primary_project_year'] != 0) ? $v['primary_project_year'] : '',
                     !empty($v['level1']) ? $level1[$v['level1']] : '',
                     !empty($v['area'])?$v['area'] : '',
@@ -488,13 +493,142 @@ class Clients_controller extends CI_Controller {
     }
 
     public function client_upload(){
-        $users = new Staff();
-        $this->data['staff'] = Staff::get_staff();
-        $this->load->helper('form');
+
+        $upload_config['upload_path'] = FCPATH . 'assets'.DC.'uploads'.DC;
+        $upload_config['allowed_types'] = 'csv';
+        $upload_config['max_size'] = '50000';
+        $this->load->library('upload', $upload_config);
+
+        if($this->input->post()){
+            if(!$this->upload->do_upload('file')){
+                $this->msg->setMsg('E', $this->upload->display_errors());
+                redirect('client_upload');
+            }else{
+                $data = $this->upload->data();
+                $this->load->library('fymcsv');
+                $csv = new Fymcsv();
+                $csv_content = $csv->parseCSV($data['full_path']);
+
+                if($csv_content['cols'] <> 10){
+                    unlink($data['full_path']);
+                    $this->msg->setMsg('E', '请按要求格式准备客户列表。');
+                    redirect('client_upload');
+                }
+
+                $return_json = array();
+                $this->load->model(array('upload_list', 'upload_list_items'));
+                $ul = new Upload_list();
+                $ul->file_name = $data['full_path'];
+                $ul->upload_by = $this->userinfo->id;
+                $ul->upload_type = 'U';
+                $ul->upload_date = date('Y-m-d H:i:s', time());
+                $ul->save();
+
+                foreach($csv_content['data'] as $new_client){
+                    $_line1_row1 = $new_client[0];
+                    if (preg_match("/[\x7f-\xff]/", $_line1_row1))
+                        $_line1_row1 = iconv('gb2312', 'utf-8//IGNORE', $_line1_row1);
+                        #$_line1_row1 = mb_convert_encoding($_line1_row1, 'UTF-8', 'GB2312, BIG-5');
+                    if($_line1_row1 == '企业名称') continue;
+
+                    $_tmp_client = new Clients();
+                    $find = $_tmp_client->findClientByName($_line1_row1);
+
+                    $_new_client = array();
+                    foreach($new_client as $_k => $_nc){
+                        if (preg_match("/[\x7f-\xff]/", $_nc))
+                            $_new_client[$_k] = iconv('gb2312', 'utf-8//IGNORE', $_nc);
+                            #$_new_client[$_k] = mb_convert_encoding($_nc, 'UTF-8', 'GB2312, BIG-5');
+                        else
+                            $_new_client[$_k] = $_nc;
+                    }
+
+                    if(!$find){
+                        // 新客户
+                        $_tmp_client->name = $_new_client[0];
+                        foreach($this->data['projects'] as $_pk => $_p){
+                            if($_p == $_new_client[1]){
+                                $_tmp_client->primary_project = $_pk;
+                                break;
+                            }
+                            $_tmp_client->primary_project = '';
+                        }
+                        foreach($this->data['progress'] as $_pk => $_p){
+                            if($_p == $_new_client[2]){
+                                $_tmp_client->progress = $_pk;
+                                break;
+                            }
+                            $_tmp_client->progress = 1;
+                        }
+                        foreach($this->data['status'] as $_pk => $_p){
+                            if($_p == $_new_client[3]){
+                                $_tmp_client->status = $_pk;
+                                break;
+                            }
+                            $_tmp_client->status = 1;
+                        }
+                        $_tmp_client->area = $_new_client[4];
+                        $_tmp_client->contact = $_new_client[5];
+                        $_tmp_client->address = $_new_client[6];
+                        $_tmp_client->info = $_new_client[7];
+                        $_tmp_client->note = $_new_client[8];
+                        $_tmp_client->created = date('Y-m-d H:i:s', time());
+                        $_tmp_client->staff_id = $this->userinfo->id;
+                        $_tmp_client->staff = $this->userinfo->name;
+                        unset($_tmp_client->marketing_log);
+                        unset($_tmp_client->pc_info);
+                        $_tmp_client->save();
+
+                        if(!empty($_new_client[9])){
+                            $_ml = new Marketinglog();
+                            $_ml->detail = $_new_client[9];
+                            $_ml->cid = $_tmp_client->id;
+                            $_ml->sid = $this->userinfo->id;
+                            $_ml->staff = $this->userinfo->name;
+                            $_ml->date = date('Y-m-d H:i:s', time());
+                            $_ml->save();
+                        }
+                    }
+
+                    $ul_items = new Upload_list_items();
+                    $ul_items->company_name = $_line1_row1;
+                    $ul_items->list_id = $ul->list_id;
+                    $ul_items->existed_client_id = $find ? $_tmp_client->id : $_tmp_client->id;
+                    $ul_items->save();
+                }
+
+                $_slog = new Staff_log();
+                $_slog->date = date('Y-m-d H:i:s', time());
+                $_slog->action = '客户上传';
+                $_slog->sid = $this->userinfo->id;
+                $_slog->cid = 0;
+                $_slog->detail = '上传客户列表：<a href="'.site_url('upload_list/'.$ul->list_id).'">细节</a>';
+                $_slog->save();
+                redirect('upload_list/'.$ul->list_id);
+            }
+        }
+
         $this->data['here'] = 'client_upload';
         $this->data['load_extra'] = array('client_upload');
         $this->load->view('common/head', $this->data);
         $this->load->view('client_upload', $this->data);
+        $this->load->view('common/foot', $this->data);
+    }
+
+    public function upload_list($_ulid){
+        $this->load->model(array('upload_list', 'upload_list_items'));
+        $_ul = new Upload_list();
+        $_ul->load($_ulid);
+
+        $_ul_items = new Upload_list_items();
+        $_uls = $_ul_items->get_upload_info($_ulid);
+
+        $this->data['upload_info'] = $_ul;
+        $this->data['upload_items'] = $_uls;
+
+
+        $this->load->view('common/head', $this->data);
+        $this->load->view('upload_list', $this->data);
         $this->load->view('common/foot', $this->data);
     }
 

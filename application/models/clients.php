@@ -150,17 +150,19 @@ class Clients extends MY_Model{
     private function _build_ordering($paras){
         $aColumns = $this->config->item('clients_listing_cols');
         $sOrder = "";
-        if ( isset( $paras['iSortCol_0'] ) ){
-            $sOrder = "ORDER BY  ";
-            for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
-                if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
-                    $sOrder .= "`".$aColumns[ intval( $paras['iSortCol_'.$i] ) ]."` ".($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
+        if(!isset($paras['sSearch'])){
+            if ( isset( $paras['iSortCol_0'] ) ){
+                $sOrder = "ORDER BY  ";
+                for ( $i=0 ; $i<intval( $paras['iSortingCols'] ) ; $i++ ){
+                    if ( $paras[ 'bSortable_'.intval($paras['iSortCol_'.$i]) ] == "true" ){
+                        $sOrder .= "`".$aColumns[ intval( $paras['iSortCol_'.$i] ) ]."` ".($paras['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
+                    }
                 }
-            }
 
-            $sOrder = substr_replace( $sOrder, "", -2 );
-            if ( $sOrder == "ORDER BY" ){
-                $sOrder = "";
+                $sOrder = substr_replace( $sOrder, "", -2 );
+                if ( $sOrder == "ORDER BY" ){
+                    $sOrder = "";
+                }
             }
         }
         return $sOrder;
@@ -173,16 +175,17 @@ class Clients extends MY_Model{
         if(isset($paras['sSearch']) && '' != $paras['sSearch']){
             foreach($aColumns as $k => $ac){
                 $_aTable = $this->db->protect_identifiers($aTables[$k], true);
-                if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
+                #if(!in_array($_aTable, $sFrom)) $sFrom[] = $_aTable;
                 switch($ac){
                     case 'name':
                     case 'primary_project_year':
                     case 'area':
                     case 'staff':
                     default:
-                        $_sWhere_ele[] = $_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%'";
+                        #$_sWhere_ele[] = $_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%'";
+                        $_sWhere_ele[] = $_client_table.".".$ac." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%'";
                         break;
-                    case 'progress':
+                    /*case 'progress':
                     case 'status':
                         #if ( isset($paras['bSearchable_'.$k]) && $paras['bSearchable_'.$k] == "true" && $paras['sSearch_'.$k] != '' && ($paras['sSearch_'.$k] == 'progress' || $paras['sSearch_'.$k] == 'status' )) break;
                         $_sWhere_ele[] = "(".$_aTable.".id = ".$_client_table.".".$aFields[$k]." AND ".$_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
@@ -192,13 +195,13 @@ class Clients extends MY_Model{
                         break;
                     case 'primary_project':
                         $_sWhere_ele[] = "(".$_aTable.".proj_id = ".$_client_table.".primary_project AND ".$_aTable.".".$aFields[$k]." LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
-                        break;
+                        break;*/
                 }
             }
             // For marketing_log
-            $ml_table = $this->db->protect_identifiers("marketing_log", true);
+            /*$ml_table = $this->db->protect_identifiers("marketing_log", true);
             $sFrom[] = $ml_table;
-            $_sWhere_ele[] = "(".$ml_table.".cid = ".$_client_table.".id AND ".$ml_table.".detail LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";
+            $_sWhere_ele[] = "(".$ml_table.".cid = ".$_client_table.".id AND ".$ml_table.".detail LIKE '%".$this->db->escape_like_str($paras['sSearch'])."%')";*/
         }
         $return[] = $_sWhere_ele;
         $return[] = $sFrom;
@@ -267,6 +270,8 @@ class Clients extends MY_Model{
         $sFrom = array_unique(array_merge($_sFrom, $sFrom));
 
         if(count($_sWhere_ele)>0) $sWhere .= (($sWhere == 'WHERE ')? '' : " AND").implode(" AND ", $_sWhere_ele);
+
+        if(isset($paras['staff_id'])) $sWhere .= (($sWhere == 'WHERE ')? '' : " AND").' '.$_client_table.'.staff_id = '.$paras['staff_id'];
 
         if($sWhere == 'WHERE ') $sWhere = '';
         $sql = "SELECT SQL_CALC_FOUND_ROWS ".$_client_table.".* FROM ".implode(', ', $sFrom)." ".$sWhere." GROUP BY ".$_client_table.".id ".$sOrder." ".$sLimit;
@@ -531,6 +536,13 @@ class Clients extends MY_Model{
         }
 
         return $db;
+    }
+
+    public static function count_all(){
+        $cn = get_called_class();
+        $a = new $cn();
+        $db = $a->db;
+        return $db->count_all($a::DB_TABLE);
     }
 }
 
